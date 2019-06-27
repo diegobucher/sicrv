@@ -1,0 +1,91 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:caixa="http://java.sun.com/jsf/composite/caixa">	
+	
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li>
+						<a href="#"><h:outputText value="#{bundle['geral.breadcrumb.gerenciamento']}" /> </a>
+					</li>
+					<li><h:outputText value="#{bundle['geral.breadcrumb.escala']}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+	
+	<ui:define name="html-head">
+		<h:outputStylesheet library="css" name="fullcalendar.min.css" />
+		<h:outputStylesheet library="css" name="editarEscala.css" />
+
+		<h:outputScript library="js" name="moment.min.js" />
+		<h:outputScript library="js" name="fullcalendar.min.js" />
+		<h:outputScript library="js" name="fullcalendar.locale.pt-br.js" />
+			
+		<h:outputScript library="js" name="editarEscala.js" />
+			
+		<script type="text/javascript">
+			function liberarEscala(){
+				return confirm("Deseja realmente confirmar a escala?");
+			}
+		</script>
+		
+	</ui:define>
+
+	<ui:define name="content-main-page">
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{editarEscalaController.atualizarCampos()}" />
+				
+			<f:viewParam name="idEquipe" value="#{editarEscalaController.equipe.id}"/>
+			<f:viewParam name="dtIni" value="#{editarEscalaController.dataInicioStr}"/>
+			<f:viewParam name="dtFim" value="#{editarEscalaController.dataFimStr}"/>
+		</f:metadata>
+		
+		<h:form id="formPadrao" prependId="false">
+			
+			<h1 class="titlePage">#{bundle['geral.breadcrumb.escala'].toUpperCase()}</h1>
+			
+			<p:messages showDetail="false" showSummary="true" escape="true" id="messages" />
+			
+			<h:inputHidden id="equipe" value="#{editarEscalaController.equipe.id}"/>
+			<h:inputHidden id="dataInicio" value="#{editarEscalaController.dataInicioStr}"/>
+			<h:inputHidden id="dataFim" value="#{editarEscalaController.dataFimStr}"/>
+			
+			<fieldset class="filtro">
+				<caixa:cInputText title="Equipe" value="#{editarEscalaController.equipe.nome}"  disabled="true" width="200" />
+				<caixa:cInputText title="Data Inicio" value="#{editarEscalaController.dataInicioFormatadaStr}"  disabled="true" width="80" />
+				<caixa:cInputText title="Data Fim" value="#{editarEscalaController.dataFimFormatadaStr}"  disabled="true" width="80"/>
+			</fieldset>
+
+			<div id="divBotoes">
+				<p:commandLink action="null" onclick="return liberarEscala();" rendered="false"
+							styleClass="btnLaranja marginTop buttonSelected">
+					<span>Liberar Escala</span>
+				</p:commandLink>
+			</div>
+			
+			<br/>
+			<br/>
+			<br/>
+			
+			<div id="divPesquisar" style="text-align: right;  margin-bottom: 15px;">
+				<span style="font-weight: bold;">Pesquisar:</span>
+				<input id="idPesquisar" type="text" value="" onkeyup="pesquisarEmpregados(this.value)" />
+			</div>
+			
+			<div id="divCalendar">
+			</div>
+			
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

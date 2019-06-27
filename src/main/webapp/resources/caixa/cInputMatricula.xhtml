@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:cc="http://java.sun.com/jsf/composite"	
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:caixa="http://java.sun.com/jsf/composite/caixa">
+
+<!-- INTERFACE -->
+<cc:interface>
+	<!-- DEFAULT PARAMS -->
+	<cc:attribute name="value" 			 />
+	<cc:attribute name="title"  		 type="java.lang.String" 					required="true"		/>
+	<cc:attribute name="required" 		 type="java.lang.Boolean" default="false"	 					/>
+	<cc:attribute name="disabled"   	 type="java.lang.String"  default="false"	  					/>
+	<cc:attribute name="onclick" 		 type="java.lang.String" 										/>
+	<cc:attribute name="width" 			 type="java.lang.Integer" default="100" 						/>
+	<cc:attribute name="readonly" 		 type="java.lang.Boolean" default="false" 						/>
+	<cc:attribute name="maxlength" 		 type="java.lang.Integer" default="7" 							/>
+	<cc:attribute name="lupaLdap" 		 type="java.lang.Boolean" default="false" 						/>
+	
+	<cc:attribute name="controller"		 type="java.lang.Object" 						required="true"	/>
+	<cc:attribute name="render"			 type="java.lang.String" 										/>
+	
+	<cc:attribute name="nomeForm"		 type="java.lang.String" default="formPadrao"	required="false"/>
+	<cc:attribute name="exibeModal"		 type="java.lang.Boolean" default="false" 						/>
+	<cc:attribute name="idMatricula" 	 type="java.lang.String" default="matricula"					/>
+	<cc:attribute name="lista"  		 type="java.util.List" 						 					/>
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+	<c:set var="panelId" value="pnl-#{cc.attrs.idMatricula}" />
+	<c:set var="modalId" value="dlg#{cc.attrs.idMatricula}" />
+	<c:set var="lista" value="#{cc.attrs.lista eq null ? cc.attrs.controller.listEmpregado : cc.attrs.lista}" />
+	
+	<p:outputPanel id="#{panelId}" style="float:left;">
+		<h:outputLabel for="numeroMatricula" value="#{cc.attrs.title}">
+			<h:outputText rendered="#{cc.attrs.required}" styleClass="pesquisaDireta" />
+			<br/>
+			<h:inputText id="item" disabled="#{cc.attrs.disabled}" styleClass="inputtext matricula" 
+				value="#{cc.attrs.value}" style="width:#{cc.attrs.width}px;" onfocus="verificaMatricula()" onchange="verificaMatricula()"
+				label="#{cc.attrs.title}" onclick="#{cc.attrs.onclick}" maxlength="#{cc.attrs.maxlength}"
+				readonly="#{cc.attrs.readonly}">
+				<f:ajax execute="matricula:item" event="change" listener="#{cc.attrs.controller.obterEmpregado}" render="#{cc.attrs.render}"/>
+			</h:inputText>	
+		</h:outputLabel>
+			
+		<!-- Pesquisar Empregado -->
+		<label class="label-button" style="margin-top: 25px;">
+			<p:commandLink styleClass="#{cc.attrs.lupaLdap == false ? 'fa fa-search iconCaixa iconSearchInline' : 'fa fa-search iconLupa iconSearchInline'}"
+				actionListener="#{cc.attrs.controller.obterEmpregado}"
+				onclick="showStatus();" rendered="#{cc.attrs.exibeModal}"
+				oncomplete="#{modalId}.show(); showStatus();" />
+
+			<h:commandLink styleClass="#{cc.attrs.lupaLdap == false ? 'fa fa-search iconCaixa iconSearchInline' : 'fa fa-search iconLupa iconSearchInline'}" rendered="#{not cc.attrs.exibeModal}"  style="text-decoration: none;"
+							actionListener="#{cc.attrs.controller.obterEmpregado}" disabled="#{cc.attrs.disabled}">  						
+				<f:ajax execute="matricula:item" render="#{cc.attrs.render}"/>
+			</h:commandLink>						
+		</label>
+	</p:outputPanel>
+	
+	<!-- CONFIRMAR EXCLUSAO -->
+	<p:dialog rendered="#{cc.attrs.exibeModal}" header="Listagem de Empregados"
+		id="#{modalId}Id" widgetVar="#{modalId}" width="630px" height="380"
+		styleClass="ui-dialog-background" modal="true" dynamic="true"
+		resizable="false" position="center">
+		<h:form id="empregadoForm">
+			
+			<p:dataTable 
+				id="empregadoDataTable"
+				value="#{lista}"
+				var="empregado" widgetVar="dtEmpregado"
+				selection="#{cc.attrs.controller.empregadoSelecionado}"
+				emptyMessage="#{bundle['geral.crud.noItemFound']}"
+				paginator="false" scrollHeight="255" scrollable="true"
+				rowStyleClass="#{empty rowIx or rowIx mod 2 ne 0 ? 'even-row' : 'odd-row'}"
+				rowIndexVar="rowIx" rowKey="#{empregado}" sortBy="nome"
+				sortFunction="#{cc.attrs.controller.sortTextIgnoreCase}"
+				tableStyleClass="tablefixa" style="width: 600px !important; height: 300px; margin: 0px !important;" >
+
+
+				<f:facet name="header">
+					<p:outputPanel style="text-align:right; margin-right:5px"
+						styleClass="ui-widget-auxiliar">
+						<h:outputText
+							value="#{bundle['geral.label.pesquisar.doisPontos']}"
+							escape="false" />
+						<h:inputText id="globalFilter"
+							onkeyup="dtEmpregado.filter();" style="width:150px;"
+							maxlength="255" styleClass="semClear" />
+					</p:outputPanel>
+				</f:facet>
+				
+				<p:column selectionMode="single" style="width:6%" styleClass="gri-acoes"/>
+
+				<!-- MATRÍCULA -->
+				<p:column
+					headerText="MATRÍCULA"
+					filterBy="matricula" style="width:15%" 
+					filterStyle="display:none; visibility:hidden;"
+					styleClass="gri-alfanumericos noBackGroundImage">
+					<h:outputText value="#{empregado.matricula.toUpperCase()}" />
+				</p:column>
+				
+				<!-- NOME EMPREGADO -->
+				<p:column
+					headerText="NOME EMPREGADO"
+					filterBy="nome" style="width:45%" 
+					filterStyle="display:none; visibility:hidden;"
+					styleClass="gri-alfanumericos noBackGroundImage">
+					<h:outputText value="#{empregado.nome.toUpperCase()}" />
+				</p:column>
+
+			</p:dataTable>
+			<br/><br/>
+			<p:commandButton styleClass="btnLaranja marginTop buttonSelected" process="@form" update="#{cc.attrs.render}"
+				action="#{cc.attrs.controller.carregarEmpregado()}" value="Selecionar" oncomplete="#{modalId}.hide(); hideStatus();" />			
+
+			<p:commandLink styleClass="btnAzul marginTop buttonSelected"
+				onclick="showStatus();"
+				oncomplete="#{modalId}.hide(); hideStatus();">
+				
+				<span><h:outputText style="width: 1; height: 1;" title="Cancelar" value="Cancelar" /></span>
+			</p:commandLink>
+			
+
+		</h:form>
+	</p:dialog>
+		
+</cc:implementation>
+</html>

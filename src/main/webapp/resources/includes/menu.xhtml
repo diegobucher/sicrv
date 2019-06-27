@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+	<ul class="menu">
+		<!-- Esse é o 1 nivel ou o nivel principal -->
+<!-- 		<li><a href="#">Consulta <i class="fa fa-caret-down"></i></a> -->
+<!-- 			<ul class="submenu-1"> -->
+<!-- 				Esse é o 2 nivel ou o primeiro Drop Down -->
+<!-- 				<li><a href="#{request.contextPath}/home.xhtml">Minha Escala</a></li> -->
+<!-- 			</ul> -->
+<!-- 		</li> -->
+		<li><a href="#">Gerenciamento <i class="fa fa-caret-down"></i></a>
+			<ul class="submenu-1">
+				<!-- Esse é o 2 nivel ou o primeiro Drop Down -->
+				<li><a href="#{request.contextPath}/pages/atividade/consulta.xhtml">Atividade</a></li>
+				<li><a href="#{request.contextPath}//pages/equipe/consulta.xhtml">Equipe</a></li>
+				<li><a href="#{request.contextPath}/pages/ausenciaEmpregado/consulta.xhtml">Ausência Empregado</a></li>
+				<li><a href="#{request.contextPath}/pages/estacaoTrabalho/consulta.xhtml">Estação de Trabalho</a></li>
+<!-- 				<li><a href="#{request.contextPath}/home.xhtml">Estação de Trabalho</a></li> -->
+			</ul>
+		</li>
+<!-- 		<li><a href="#">Parâmetro <i class="fa fa-caret-down"></i></a> -->
+<!-- 			<ul class="submenu-1"> -->
+<!-- 				Esse é o 2 nivel ou o primeiro Drop Down -->
+<!-- 				<li><a href="#{request.contextPath}/home.xhtml">Curva Padrão</a></li> -->
+<!-- 			</ul> -->
+<!-- 		</li> -->
+	</ul>
+</html>

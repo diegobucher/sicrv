@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:o="http://omnifaces.org/ui"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:of="http://omnifaces.org/functions"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+	xmlns:p="http://primefaces.org/ui" >
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta content="text/html; charset=UTF-8" http-equiv="content-type" />
+	</f:facet>
+
+	<title>#{bundle['geral.nomesistema']}</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+	<h:outputStylesheet library="css" name="estilo.css" />
+	<h:outputStylesheet library="css" name="datepicker.css" />
+	<h:outputStylesheet library="css" name="picklist.css" />
+	
+	<h:outputScript library="primefaces" name="jquery/jquery.js" target="head" />
+	<h:outputScript library="js" name="jquery.mask.js" />
+	
+	<h:outputScript library="js" name="jquery.blockUI.js" />
+	<h:outputScript library="js" name="primefaces-locale.js" />
+	<h:outputScript library="js" name="geral.js" />
+		
+	<ui:insert name="html-head" />
+</h:head>
+<h:body>
+	<div id="tudo" class="container-principal">	
+	
+		<!-- Div Topo -->
+		<div id="wrapTopo">
+			<h:form id="formTop">
+				<div id="topo">
+					<h1>CAIXA</h1>					
+					<h2>#{bundle['geral.nomesistema']} <span>#{bundle['geral.subnomesistema']}</span></h2>
+					<div id="wrapIdentificacao">
+						<div id="identificacao">
+							<p>
+								<span>Olá <h:outputText
+										value="#{controleAcesso.usuario.primeiroNomeUsuario}" />,
+									seja bem-vindo.
+								</span> <br />
+								<h:outputText value="#{dataDiaExtenso}" />
+							</p>
+
+							<a href="#" id="btnInfos" class="btnAzul marginTop">
+								<span>Infos</span>
+							</a>
+							<h:commandLink value="" action="#{controleAcesso.logout()}"
+								styleClass="btnLaranja marginTop"
+								title="Clique aqui para sair">
+								<span>Sair</span>
+							</h:commandLink>
+
+							<div id="dropIdentif" style="overflow:visible;width:280px;display:none">
+								<span />
+								<div id="usuarioIdentificacao" style="width:150px; overflow:visible;">
+									<p>
+										<span>Responsável</span> <br />
+										<h:outputText value="#{controleAcesso.usuario.nomeUsuario}" />
+										<br/>
+										<span>Perfil</span><br/>
+										<h:outputText value="#{controleAcesso.nomePerfil}" />
+									</p>
+								</div>
+								<div id="unidadelotacao" style="overflow:hidden;">
+									<span>Unidade</span> <br />
+									<h:outputText value="#{controleAcesso.usuario.noUnidade}" />
+								</div>
+							</div>
+<!-- 							<div id="dropIdentif" style="display: none;">#{bundle['geral.versao']}</div> -->
+
+						</div>
+					</div>
+				</div>
+			</h:form>
+		</div>
+		
+		<!-- Menu Superior -->
+        <div id="wrapMenuHor">
+       		<div id="menuHorizontal">
+
+                <ul>
+                	<li><a href="#{request.contextPath}/pages/programacao/listagem.xhtml">#{bundle['geral.menu.programacao']}</a></li> 
+                	<c:if test="#{controleAcesso.obterQuizAtivo() ne null}">
+	                	<li><a href="#{request.contextPath}/pages/quiz/home.xhtml">#{bundle['geral.menu.quiz']}</a></li> 
+                	</c:if>
+                	<c:if test="#{controleAcesso.getTipoUsuario() == 1}">
+	                	<li><a href="#{request.contextPath}/pages/cadastro/home.xhtml">#{bundle['geral.menu.cadastro']}</a></li>          
+    		            <li><a href="#{request.contextPath}/pages/resultadoQuiz/consulta.xhtml">#{bundle['geral.menu.resultadoQuiz']}</a></li>              
+                	</c:if>             
+                
+                </ul>
+			</div>        
+		</div>
+		<div id="idBreadcrumb" style="width: 944px; margin-left: 195px; margin: 0 auto;  margin-bottom: 8px;">
+			<div id="wrapAuxiliar">   
+				<ui:insert name="breadcrumb" />
+			</div>
+		</div>
+		
+		<!-- Conteúdo -->
+        <div id="wrapConteudo">
+			
+			<div id="conteudo">
+				<div id="barra-content-left">
+		       		 <h:form id="formMenuVertical">
+						<div id="menu-vertical-area">
+							<div id="wrapMenuVertical" >
+								<ul id="menuVertical" >
+									<li>
+										<a href="#{request.contextPath}/pages/programacao/consulta.xhtml" class="menuLink">#{bundle['geral.menu.programacao']}</a>
+									</li>
+									<li>
+										<a href="#{request.contextPath}/pages/tema/consulta.xhtml" class="menuLink">#{bundle['geral.menu.tema']}</a>
+									</li>
+									<li>
+										<a href="#{request.contextPath}/pages/questao/consulta.xhtml" class="menuLink">#{bundle['geral.menu.questao']}</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+					</h:form>
+				</div>
+			
+				<div id="barra-content-right">
+					<ui:insert name="content-main-page">
+						<br></br>
+					</ui:insert>
+				
+					<div id="idLoad" class="carregando"><span>Carregando</span></div>
+					<p:ajaxStatus id="ajaxStatusPanel" onstart="showStatus();" oncomplete="hideStatus();"/>			    
+					<div class="clear"></div>
+				</div>
+				
+				<div class="clear">
+				</div>
+			</div>
+		</div>
+		
+		<!-- Rodapé -->
+		<div id="wrapRodape">
+			<div id="rodape">
+				<p>#{bundle['geral.rodape']} - #{bundle['geral.versao']}</p>
+			</div>
+		</div>
+	</div>
+</h:body>
+</html>

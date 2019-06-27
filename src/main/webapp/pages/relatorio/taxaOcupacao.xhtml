@@ -1,0 +1,170 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:caixa="http://java.sun.com/jsf/composite/caixa">
+
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li><a href="#"><h:outputText value="#{bundle['geral.breadcrumb.relatorio']}" /> </a></li>
+					<li><h:outputText value="#{bundle['geral.breadcrumb.relatorio.taxaOcupacao']}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+	
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+	
+	<ui:define name="html-head">
+		<h:outputScript library="js" name="jquery.dataTables.min.js" /> 
+		<h:outputScript library="js" name="chartsUtils.js" /> 
+		<h:outputScript library="js" name="Chart.bundle.min.js" />
+		<h:outputScript library="js" name="taxaOcupacao.js" />
+	</ui:define>
+	
+	<ui:define name="content-main-page">
+	
+		<h:form id="formConsulta" prependId="false">
+		
+			<p:messages id="messages" showDetail="false" />
+			
+			<h1 class="titlePage">#{bundle['relatorio.taxaOcupacao.title.consulta']}</h1>
+			
+			<fieldset class="filtro">
+				<div id="divFiltro" style="display: inline-block;">
+					
+					<!-- Data Início -->
+					<caixa:cInputData id="dataInicio" title="#{bundle['geral.label.data.inicio']}" value="#{relatorioTaxaOcupacaoController.dataInicio}" required="true"/>
+
+					<!-- Data Fim -->
+					<caixa:cInputData id="dataFim" title="#{bundle['geral.label.data.fim']}" value="#{relatorioTaxaOcupacaoController.dataFim}" required="true" />
+					
+					<!-- Equipe -->
+					<caixa:cCombo id="idEquipe" title="Equipe" lista="#{relatorioTaxaOcupacaoController.listEquipe}" 
+								value="#{relatorioTaxaOcupacaoController.equipe.id}" var="equipe"  required="true" 
+								itemLabel="#{equipe.nome}" itemValue="#{equipe.id}" width="160"/>
+				</div>
+				<div id="divBotes">
+					<h:panelGroup>
+						<p:commandLink title="#{bundle['geral.button.consultar']}" styleClass="btnAzul marginTop buttonSelected" 
+							update="@form messages" actionListener="#{relatorioTaxaOcupacaoController.pesquisar()}" 
+							oncomplete="if(!args.validationFailed){pesquisar()}">
+							<span>#{bundle['geral.button.consultar']}</span>
+						</p:commandLink>
+
+					</h:panelGroup>
+				</div>
+			</fieldset>
+			
+		   <div class="clear"></div>
+            
+            
+            <canvas id="chartOcupacao" height="130"></canvas>
+	
+			<h:panelGroup id="panelDetalhamentoAtividade" rendered="#{not empty relatorioTaxaOcupacaoController.listAtividade}">
+				
+		            <hr></hr>
+	             
+			        <div id="table_atividade_2" >
+			        	<br></br>
+<!-- 						<fieldset class="filtro"> -->
+<!-- 							<div id="divFiltro" style="display: inline-block;"> -->
+							
+								<!-- Atividades -->
+<!-- 								<h:outputLabel value="Atividade"> -->
+<!-- 									<h:outputText styleClass="pesquisaDireta" /> -->
+<!-- 									<br/> -->
+<!-- 									<h:selectOneMenu id="combo" value="#{relatorioTaxaOcupacaoController.atividade.id}" style="width:160px;"> -->
+<!-- 										<f:selectItem  itemLabel="Selecione" noSelectionOption="true" /> -->
+<!-- 										<f:selectItems value="#{relatorioTaxaOcupacaoController.listAtividade}" var="atividade" itemValue="#{atividade.id}" -->
+<!-- 										 itemLabel="#{atividade.nome}" /> -->
+<!-- 			 							<f:ajax event="change" listener="#{relatorioTaxaOcupacaoController.detalharAtividade()}" render="panelDetalhamentoAtividade"/> -->
+<!-- 									</h:selectOneMenu> -->
+<!-- 								</h:outputLabel> -->
+								
+								
+<!-- 							</div> -->
+<!-- 						</fieldset> -->
+					
+					<p:remoteCommand actionListener="#{relatorioTaxaOcupacaoController.detalharAtividade()}" name="detalharAtividade"  update="panelDetalhamentoAtividade"/>
+
+					<h:panelGroup rendered="#{relatorioTaxaOcupacaoController.atividade.id != null}">
+		            	<h3>#{relatorioTaxaOcupacaoController.getNomeAtividade()}</h3>
+			            
+			            <ui:repeat var="semana" value="#{relatorioTaxaOcupacaoController.taxaOcupacaoSemanaDTOList}">
+			            	<br></br>
+			            	<h4>
+				            	Semana: 
+								<h:outputText value="#{semana.dataInicio}" > - 
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+								</h:outputText>
+								<h:outputText value=" à " />
+								<h:outputText value="#{semana.dataFim}" > 
+									<f:convertDateTime type="date" pattern="dd/MM/yyyy"/>
+								</h:outputText>
+			            	</h4>
+		
+				            <div class="legendaCurvaPadrao">
+			               		<span class="fa fa-square "></span>Curva padrão não atendida
+				            </div>
+				            
+				            <h:dataTable  styleClass="zebra" cellpadding="0" width="100%" rowClasses="impar, par"
+				            	headerClass="center"
+								value="#{semana.detalhamentoSemanaList}" var="relatorio"> 
+								<h:column>
+				    				<f:facet name="header">HORÁRIO</f:facet>
+				    				#{relatorio.horarioPeriodo}
+				    			</h:column>
+								<h:column>
+				    				<f:facet name="header">SEGUNDA</f:facet>
+				    				#{relatorio.segundaComparativoStr}
+				    			</h:column>
+								<h:column>
+				    				<f:facet name="header">TERÇA</f:facet>
+				    				#{relatorio.tercaComparativoStr}
+				    			</h:column>
+								<h:column>
+				    				<f:facet name="header">QUARTA</f:facet>
+				    				#{relatorio.quartaComparativoStr}
+				    			</h:column>
+								<h:column>
+				    				<f:facet name="header">QUINTA</f:facet>
+				    				#{relatorio.quintaComparativoStr}
+				    			</h:column>
+								<h:column>
+				    				<f:facet name="header">SEXTA</f:facet>
+				    				#{relatorio.sextaComparativoStr}
+				    			</h:column>
+								<h:column>
+				    				<f:facet name="header">SÁBADO</f:facet>
+				    				#{relatorio.sabadoComparativoStr}
+				    			</h:column>
+								<h:column>
+				    				<f:facet name="header">DOMINGO</f:facet>
+				    				#{relatorio.domingoComparativoStr}
+				    			</h:column>
+							</h:dataTable>
+			            
+				            <div class="separador"></div>
+			            	<br></br>
+			            	
+			            </ui:repeat>
+	            		<script type="text/javascript">
+	            			criarDataTable();
+	            		</script>
+			            
+					</h:panelGroup>
+		    	</div>
+				
+			</h:panelGroup>
+	
+   		 	<div class="clear"></div>
+			
+		</h:form>
+	</ui:define>
+</ui:composition>

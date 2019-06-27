@@ -1,0 +1,125 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li><a href="#"><h:outputText value="#{bundle['geral.breadcrumb.gerenciamento']}" /> </a></li>
+					<li><h:outputText value="#{bundle['geral.breadcrumb.atividade.consultar']}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+
+	<ui:define name="html-head">
+		<h:outputStylesheet library="css" name="atividade.css" />
+		<h:outputStylesheet library="css" name="expansivel.css" />
+		<!-- 			<h:outputScript library="js" name="jquery-1.12.3.js" /> -->
+		<h:outputScript library="js" name="jquery.dataTables.min.js" />
+		<h:outputScript library="js" name="atividade.js" />
+
+		<script type="text/javascript">
+			function editarAtividade(atividadeId) {
+				$('#formConsulta\\:idAtividade').val(atividadeId);
+				editar();
+			}
+			function detalharAtividade(atividadeId) {
+				$('#formConsulta\\:idAtividade').val(atividadeId);
+				detalhar();
+			}
+			function excluirAtividade(atividadeId) {
+				$('#formConsulta\\:idAtividade').val(atividadeId);
+				excluir();
+			}
+		</script>
+	</ui:define>
+
+	<ui:define name="content-main-page">
+
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{consultarAtividadeController.prepareToResult}" />
+		</f:metadata>
+
+		<h:form id="formConsulta">
+
+			<p:focus id="focusFormConsulta" for="formConsulta" />
+			<p:messages id="messages" showDetail="false" showSummary="true" />
+
+			<h1 class="titlePage">#{bundle['atividade.title.consulta']}</h1>
+
+			<fieldset class="filtro">
+
+				<div id="divFiltro" style="display: inline-block;">
+					<!-- Atividade -->
+					<h:outputLabel for="idNome" style="width: 100%" value="#{bundle['atividade.label.atividade']}" styleClass="label-button">
+						<br></br>
+						<h:inputText id="idNome" size="100" maxlength="100" styleClass="inputtext" value="#{consultarAtividadeController.nomeAtividade}" />
+					</h:outputLabel>
+					<br></br>
+				</div>
+
+				<div id="divBotes">
+					<h:panelGroup>
+						<p:commandLink title="#{bundle['geral.button.consultar']}" styleClass="btnLaranja marginTop buttonSelected" onclick="pesquisar()" update="messages">
+							<span>#{bundle['geral.button.consultar']}</span>
+						</p:commandLink>
+
+						<p:commandLink title="#{bundle['geral.button.novo']}" styleClass="btnAzul marginTop buttonSelected"
+							action="#{consultarAtividadeController.redirectTelaManter}">
+							<span>#{bundle['geral.button.novo']}</span>
+						</p:commandLink>
+					</h:panelGroup>
+				</div>
+			</fieldset>
+
+			<p:remoteCommand name="editar" action="#{consultarAtividadeController.editar()}" process="@this idAtividade" />
+			<p:remoteCommand name="detalhar" action="#{consultarAtividadeController.detalhar()}" process="@this idAtividade" />
+			<p:remoteCommand name="excluir" process="@this idAtividade" oncomplete="dlgExcluir.show()" />
+
+			<h:inputHidden id="idAtividade" value="#{consultarAtividadeController.idAtividade}" />
+			<h:inputHidden id="idUnidade" value="#{consultarAtividadeController.idUnidadeUsuario}" />
+
+			<h:inputHidden id="pesquisado" value="#{consultarAtividadeController.pesquisado}" />
+
+			<!-- Ao ajustar tamanhos da tabela, ajustar também a subgrid no javascript -->
+			<table id="example" class="display gridAtividade" cellspacing="0" width="100%" style="display: none">
+				<thead>
+					<tr>
+						<th style="width: 10%"></th>
+						<th style="width: 30%">ATIVIDADE</th>
+						<th style="width: 45%" class="">PERIODICIDADE</th>
+						<th style="width: 15%" class="">AÇÕES</th>
+					</tr>
+				</thead>
+
+			</table>
+
+		</h:form>
+
+		<!-- CONFIRMAR EXCLUSAO -->
+		<p:dialog header="#{bundle['atividade.label.tituloPagina.exclusao']}" id="dlgExcluirId" widgetVar="dlgExcluir" styleClass="ui-dialog-background" modal="true"
+			dynamic="true" resizable="false" position="center">
+
+			<h:form id="excluirForm">
+				<span id="atencaoRatingId" class="atencao2" />
+				<h:outputFormat style="font-weight: bold !important;" value="#{bundle['geral.crud.confirmExcluir']}">
+				</h:outputFormat>
+				<br></br>
+				<p:commandLink id="btnExcluir" styleClass="btnLaranja marginTop buttonSelected" action="#{consultarAtividadeController.excluir()}" onclick="showStatus();"
+					update=":formConsulta:messages" oncomplete="dlgExcluir.hide(); hideStatus(); pesquisar();">
+					<span><h:outputText style="width: 1; height: 1;" title="Sim" value="Sim" /></span>
+				</p:commandLink>
+				<p:commandLink id="btnNaoExcluir" styleClass="btnAzul marginTop buttonSelected" onclick="showStatus();" oncomplete="dlgExcluir.hide(); hideStatus();">
+					<span><h:outputText style="width: 1; height: 1;" title="Não" value="Não" /></span>
+				</p:commandLink>
+				<p:spacer height="30px" />
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+
+</ui:composition>

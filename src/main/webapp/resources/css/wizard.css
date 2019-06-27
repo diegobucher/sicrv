@@ -1,0 +1,27 @@
+.ui-wizard-nav-back{ background:url(#{request.contextPath}/resources/imagens/btnSprite2.png) no-repeat scroll 0px -23px !important; float:left !important; font-size:12px !important; font-weight:bold !important; text-decoration:none !important; height:23px !important; padding-left:5px !important; cursor:pointer !important; margin-right:5px !important; }
+.ui-wizard-nav-back span{ background:url(#{request.contextPath}/resources/imagens/btnSprite2.png) no-repeat 100% 0px; line-height:23px !important; padding:0px 10px 0px 5px !important; height:23px !important; float:left !important; color:#FFF !important; }
+
+.ui-wizard-nav-next{ background:url(#{request.contextPath}/resources/imagens/btnSprite2.png) no-repeat scroll 0px -23px !important; float:left !important; font-size:12px !important; font-weight:bold !important; text-decoration:none !important; height:23px !important; padding-left:5px !important; padding-top:0px !important; cursor:pointer !important; margin-right:5px !important; }
+.ui-wizard-nav-next span{ background:url(#{request.contextPath}/resources/imagens/btnSprite2.png) no-repeat 100% 0px; line-height:23px !important; padding:0px 10px 0px 5px !important; height:23px !important; float:left !important; color:#FFF !important; }
+
+.ui-button {/* padding: 5px !important; */ border: none !important; line-height: 0px !important;}
+.ui-button-text{padding: 9px !important; line-height: 0.3 !important;}
+.ui-button:hover{background-color: transparent !important;}
+.ui-wizard-step-title{font-family: FontAwesome !important; font-size: 15px !important; margin: 0 1px 0 0 !important; border-top-right-radius: 0.4em !important; border-top-left-radius: 0.4em !important; border-bottom: none !important;}
+.ui-state-highlight{background-color: #F5F8F9 !important; text-shadow: none !important; backgroud: #EBEFFA !important; color: #545454 !important;}
+.ui-widget-content{text-shadow: none !important;}
+.ui-widget-header{text-shadow: none !important;}
+li.ui-wizard-step-title{background: #EBEFFA -webkit-gradient(linear, left top, left bottom, from(rgba(0,0,0,0)), to(rgba(0,0,0,0))) !important; 
+						background: #EBEFFA -moz-linear-gradient(center top , rgba(0, 0, 0, 0.0), transparent) repeat scroll 0% 0%}
+.ui-wizard-content{margin: 0px !important;}
+.ui-inputfield{background: #f4fcfe !important;}
+.ui-state-hover{outline: none !important;}
+.ui-chkbox-box{background-color: #f4fcfe !important; border: 1px solid grey !important;}
+.ui-expanded-row-content{width:100% !important; height: 100% !important;}
+.ui-icon-circle-triangle-e{background:url(#{request.contextPath}/resources/imagens/mais.gif) no-repeat -50% center !important; display:block; float: left !important; margin-left: 5px !important;}
+.ui-icon-circle-triangle-s{background:url(#{request.contextPath}/resources/imagens/menos.gif) no-repeat -50% center !important; display:block; float: left !important; margin-left: 5px !important;}
+.ui-selection-column{border: 1px dotted !important;}
+.gri-alfanumericos{border-left: none !important;}
+.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td{padding: 0px !important; height: 35px !important;}
+.ui-wizard-navbar{margin-top: 5px !important;}
+.ui-state-default{box-shadow: 0px 0px 0px #FFF inset !important}

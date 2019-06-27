@@ -1,0 +1,162 @@
+table.gridAtividade{ clear:both; width:100%; border-collapse: collapse;/* margin:0px auto;*/ /*margin-top:5px;*/ /*margin:10px 0px 10px;*/}
+table.gridAtividade thead{ background:#d5d5d5;}
+table.gridAtividade td.cinza{background:#e9e9e9; font-weight:bold; border-bottom:1px dotted #666;}
+table.gridAtividade thead tr th {text-align:center; color:#333;}
+table.gridAtividade tr td, table.gridAtividade tr th { padding:8px; /* font-size: 0.9em; */}
+
+/*table.zebra tr{ border-bottom:1px dotted #666; }*/
+table.gridAtividade .left{ text-align:left;} 
+table.gridAtividade .right{text-align:right;}
+table.gridAtividade .center{ text-align:center;}
+table.gridAtividade tfoot{background:#d5d5d5 ;color:#333;}
+table.gridAtividade tfoot tr{cursor:auto;}
+ /*CSS para efeitos jQuery */
+table.gridAtividade .impar {background:#F4FCFE;}/*ebeffa*/
+table.gridAtividade .par {background:#d9e1f4;}/*#E5EEFF*/
+/*table.zebra .destacar {	background:#ffcc99;	color:#333;	}*/
+table.gridAtividade .borderLeft{ border-left:1px dotted #666;}
+table.gridAtividade input.checkbox{ border:none; background:none;}
+.tabelaFoot{ height:30px;}
+/*table.zebra{ border:1px solid #CCC;}*/
+/*table tbody tr.impar:hover, table tbody tr.par:hover{background-color: #ffcc99;	cursor:pointer;}*/
+table.gridAtividade .um {background:#F4FCFE;}/*ebeffa*/
+table.gridAtividade .dois {background:#d9e1f4;}/*#E5EEFF*/
+
+
+#subtable > thead > tr {
+  color: rgb(51, 51, 51);
+  background-color: rgb(213, 213, 213);
+}
+
+table.gridAtividade tr > td {
+/*  padding-left: 0 !important;*/
+  padding-right: 0 !important;
+  
+}
+
+table.gridAtividade{
+	border: 1px dotted #666;	
+}
+
+table.gridAtividade > tbody > tr > td {
+	border-bottom: 1px dotted #666;	
+}
+
+/*
+.gridAtividade  tbody  tr:not([role= 'row']){
+	color: red !important;
+}*/
+
+.gridAtividade  tbody  td[colspan= '4']{
+	padding: 0;
+}
+
+.centralizar{
+  text-align: center;
+}
+
+table.gridAtividade{
+	/*border: 1px dotted #666;*/	
+}
+
+.borderLeft {
+    border-left: 1px dotted #666;
+}
+
+.borderRight {
+    border-right: 1px dotted #666;
+}
+
+.paddingLeft{
+	padding-left: 10px !important;
+}
+
+.even {
+	border-botton: 1px dotted #666;
+}
+
+.paging_full_numbers {
+  float: left;
+  min-width: 325px;
+}
+
+
+.first, .previous, .next, .last {
+  color: transparent !important;
+  background-image: url("/sicrv/javax.faces.resource/images/ui-icons_38667f_256x240.png.xhtml?ln=primefaces-aristo") !important;
+  text-indent: -99999px!important;
+  padding-left: 0px;
+  padding-right 0px:
+}
+
+.first {
+  background-position: -80px -160px !important;
+  display: inline-block;
+  width: 15px;
+  height: 12px;
+  margin-right: 15px;
+}
+
+.previous  {
+  background-position: -48px -160px !important;
+  display: inline-block;
+  width: 15px;
+  height: 12px;
+  margin-right: 15px;
+}
+
+.next  {
+  background-position: -32px -160px !important;
+  display: inline-block;
+  width: 15px;
+  height: 12px;
+  padding-left: 0 !important;
+  margin-right: 15px;
+  margin-left: 15px;
+}
+
+.last  {
+ background-position: -64px -160px !important;
+  display: inline-block;
+  width: 15px;
+  height: 12px;
+ 
+}
+span > .paginate_button{
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.paginate_button{
+  cursor: pointer;
+  text-decoration: none;
+}
+
+a.paginate_button.current {
+  cursor: auto !important;
+   text-decoration: underline;
+}
+
+.dataTables_paginate > .disabled{
+ cursor: auto !important;
+ opacity: 0.3;
+}
+
+.dataTables_info, .dataTables_paginate {
+	margin-top: 10px !important;
+}
+.rodape {
+  width: 100%;
+  overflow: hidden;	
+}
+
+.dataTables_length{
+  margin-left: 15px;
+  padding-top: 5px;
+}
+
+.details-control{
+	color: transparent;
+}
+
+

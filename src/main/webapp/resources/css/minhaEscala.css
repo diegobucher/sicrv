@@ -1,0 +1,220 @@
+@charset "utf-8";
+/* CSS Document */
+
+.cadastroDescricao{ width:910px; height:60px;}
+.cadastroAtividade{ width:910px;}
+.cadastroAtividadeModal{ width:750px;}
+.cadastroHoraInicio,.cadastroHoraFim{ width:60px;}
+.cadastroQtMinimaEmpregado{ width:150px;}.cadastroNomeEquipe,
+.cadastroCgcUnidade{width:430px;}
+.iconSearchInline{ margin-top:24px; float:left; margin-right:8px;}
+.cadastroNomeEmpregado{width:400px;}
+.cadastroFuncao{width:290px;}
+.cadastroSupervisor{width:70px;}
+.cadastroTipoJornada{width:130px;}
+.matricula{ width:60px;}
+
+/******************|Minha Escala|*********************/
+.minhaEscalaLiberacao{ width:240px; height:60px;}
+.listaEquipe li{ list-style-type:none; display:inline; margin-right:5px; }
+
+/***************************************/
+
+.novaAtividadeDescricao{ width:910px; height:60px;}
+.novaAtividadeHoraInicio,.novaAtividadeHoraFim{ width:60px;}
+#atividadeMacro{display: none;}
+#novaAtividadePrioridade{display: none;}
+.novaAtividadePrioridade{width:60px;}
+.baselineQtdChamados{width:90px;}
+.baselineAtendimento{width:150px;}
+.selectEquipe{width:300px;}
+
+.cinza{ background-color:#d7d7d7 !important; color:#333 !important;  border-bottom:1px solid #ccc;}
+.cinza:hover{ background-color:#d7d7d7 !important; color:#333 !important!;  border-bottom:1px solid #ccc;}
+.novaAtividadeNome{width: 435px;}
+.consultaAtividadeNome{width: 435px;}
+
+.colLeft{float:left; width:739px; }
+.colRight{float:right; width:190px;  }
+
+.selectMeses{ color:#333; font-size:14px; text-transform:uppercase; font-weight:bold;}
+.selectMeses  i { font-size:18px; cursor:pointer; color:#0039ba;}
+.selectMeses  i.fa-caret-left{ margin-right:10px;}
+.selectMeses  i.fa-caret-right{ margin-left:10px;}
+
+.hoverColor:hover{ color:#F90;}
+
+.iconLegenda{ 
+	width:14px;
+	height:14px;
+	border:1px solid #c0c0c0;
+	margin-right:5px;
+ 	display:inline-block;
+	}
+
+.legenda{
+	position:fixed;
+	border:1px solid #c0c0c0;
+	list-style-type:none;
+	padding:10px;
+	background-color:#f1f1f1;
+	width:169px;
+	}
+ul.legenda li{ font-weight:bold; padding:2px 0;}
+
+.saldoFolgas{  width:auto; height:60px; border:1px solid #c0c0c0;}
+
+.atestado, .aniversario, .juriPolular, .destacamento, 
+.ferias, .folgaFinalSemana, .licencaOutrosMotivos, 
+.licencaPremio, .substituicao, .repousoRemunerado, 
+.folgaAdquirida, .folgaGozada, .folgaSugerida{
+	color:#fff !important; 
+	border:none !important; 
+	}
+
+
+/*.diaUtilTrabalhado:hover{border-color:#F90;}*/
+.openModalExcluirFolga{cursor:pointer;}
+.openModalIncluirFolga{ cursor:pointer;}
+.openModalIncluirFolga:hover{border-color:#F90;}
+.diaUtilTrabalhado{
+	color:#0039ba; 
+	font-size:18px; 
+	font-weight:bold; 
+}
+
+#relatorioEscala .diaUtilTrabalhado{
+	cursor:pointer; 
+}
+
+.diaUtilTrabalhado:hover{
+	border-color:#F90; 
+}
+.diaUtilTrabalhado .horario{color:#333;}
+
+.atestado{background-color:#a10009 !important;}
+.aniversario{background-color:#6e2c66 !important;}
+.juriPolular{background-color:#333333 !important;}
+.destacamento{background-color:#542222 !important;}
+.ferias{background-color:#0039ba !important;}
+.folgaFinalSemana{background-color:#225451 !important;}
+.licencaOutrosMotivos{background-color:#a19e00 !important;}
+.licencaPremio{background-color:#77562f !important;}
+.substituicao{background-color:#666666 !important;}
+.diaUtilTrabalhado{background-color:#fff !important;}
+.repousoRemunerado{background-color:#e9821c !important;}
+.solicitacaoLiberacao{background-color:#fff; color:#0039ba; border-color:#477aed !important; font-weight:bold;}
+.folgaAdquirida{background-color:#6e6c05;}
+.folgaGozada{ background-color:#c73600;}
+.folgaSugerida{ background-color:#3d27c6; cursor:pointer;}
+.folgaSugerida:hover{ background-color:#3120a1;}
+.folgaAgendada{ background-color:#6e2c66 !important; color:#fff !important;}
+.folgaAgendada:hover{ background-color:#562655!important;}
+.folgaEquipe{ background-color:#c73600; color:#fff;}
+.colorEscala{ background-color:#6e2c66;  color:#fff;}
+
+table.escala .folgaEquipe{ cursor:pointer; }
+table.escala .colorEscala{ cursor:pointer; }
+
+
+/*****|	Tabela escala |************************************/
+table.escala{ 
+	border:1px solid #c0c0c0;
+	width:100%; 
+	background-color:#f1f1f1;
+	margin-bottom:20px;
+	border-spacing:10px;
+	}
+table.escala tbody{border-spacing:10px;}
+table.escala tbody td{ 
+	border:1px solid #c0c0c0; 
+	border-radius:10px; 
+	height:50px;
+	width:93px;
+	text-align:center;
+	position:relative;
+	transition:all 0.3s linear;
+	-webkit-transition:all 0.5s linear;
+	-moz-transition:all 0.3s linear;
+
+	}
+
+.tipoFolga, .horario{
+	font-size:12px; 
+	position:absolute;
+	top:5px;
+	left:50%;
+	width:92px;
+	margin-left:-46px;
+	}
+table.escala tbody td .dia{
+	position:absolute;
+	font-size:20px;
+	top:20px;
+	left:50%;
+	width:92px;
+	margin-left:-46px;
+	}
+table.escala thead th{ 
+	color:#0039ba;
+	font-size:16px; 
+	}
+.textColorOrange{ color:#F90;}
+.textColorGreyBlack{color:#333 !important;}
+.textColorRed{color:#F00 !important;}
+.textColorGrey{color:#999 !important;}
+.textColorGreen{color:#060 !important;}
+.disabled{cursor:not-allowed;opacity:0.5; background:#f1f1f1;}
+.iconAguardando{ 
+	position:absolute;
+	top:25px;
+	left:10px;
+	}
+.iconNaoAtendida{ 
+	position:absolute;
+	top:25px;
+	left:10px;
+	}
+.legenda i{ font-size:16px; margin-right:5px;}
+
+.borderColor{ border-color:#f60 !important;}
+
+.bodyModal{ padding-bottom:50px;}
+.footerModal{ 
+	position:absolute;
+	left:0;
+	bottom:0;
+	width:100%;
+	border-top:1px solid #c0c0c0;
+	background-color:#f1f1f1;
+	}
+.footerModal > a{ margin:10px 0 10px 10px;}
+.bgCinzaEscuro{ background-color:#999 !important;}
+.bgCinzaEscuro > th{color:#fff !important;}
+
+.gerarPlanilha{ text-decoration:none; color:#333;}
+.modalAtivarDesativarET{display: none;}
+
+.iconItemValido{
+	color: green;
+	margin-left: 5px;
+	font-size: 16px !important;
+}
+.iconItemInvalido{
+	color: red;
+	margin-left: 5px;
+	font-size: 16px !important;
+}
+
+.listaEscalaTrabalho{
+	list-style: none;
+	border: 1px solid #ccc;
+	background-color: #fafafa;
+	padding: 10px 0px 10px 0px;
+}
+.listaEscalaTrabalho li i{
+	margin-right: 5px;
+}
+.listaEscalaTrabalho li{
+	padding: 4px 2px;
+}

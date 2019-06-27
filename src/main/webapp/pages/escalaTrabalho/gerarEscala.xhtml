@@ -1,0 +1,132 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core" xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+	xmlns:caixa="http://java.sun.com/jsf/composite/caixa">
+
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li><a href="#"><h:outputText value="#{bundle['geral.breadcrumb.gerenciamento']}" /> </a></li>
+					<li><h:outputText value="#{bundle['geral.breadcrumb.escala']}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+
+
+	<ui:define name="content-main-page">
+		<!-- 		<f:metadata> -->
+		<!-- 			<f:event type="preRenderView" -->
+		<!-- 				listener="#{gerarEscalaController.ajaxHandler}" /> -->
+
+		<!-- 			<f:viewParam name="idEquipe" value="#{gerarEscalaController.equipe.id}"/> -->
+		<!-- 			<f:viewParam name="dtIni" value="#{gerarEscalaController.dataInicioStr}"/> -->
+		<!-- 			<f:viewParam name="dtFim" value="#{gerarEscalaController.dataFimStr}"/> -->
+		<!-- 		</f:metadata> -->
+
+		<h:form id="formPadrao">
+
+			<!-- 			<p:focus for="formPadrao" id="focusID" /> -->
+			<!-- MENSAGENS -->
+			<p:messages showDetail="false" showSummary="true" escape="true" id="messages" />
+			<h1 class="titlePage">#{bundle['geral.breadcrumb.escala'].toUpperCase()}</h1>
+
+			<h:panelGroup rendered="#{gerarEscalaController.equipe != null}">
+				<ul class="campoObrigatorio">
+					<li class="obrigatorio">Obrigatório</li>
+				</ul>
+
+				<fieldset class="filtro">
+					<caixa:cCombo title="Equipe" lista="#{gerarEscalaController.listEquipe}" value="#{gerarEscalaController.equipe.id}" var="equipe" itemLabel="#{equipe.nome}"
+						itemValue="#{equipe.id}" disabled="true" />
+
+					<caixa:cInputData title="Data Início" value="#{gerarEscalaController.dataInicio}" required="true" />
+					<caixa:cInputData title="Data Fim" value="#{gerarEscalaController.dataFim}" required="true" />
+
+				</fieldset>
+			</h:panelGroup>
+
+			<div class="">
+				<ui:fragment rendered="#{not empty gerarEscalaController.validacaoInicialList}">
+					<ul class="listaAvaliacaoEscalaTrabalho">
+						<ui:repeat var="mensagemValidacao" value="#{gerarEscalaController.validacaoInicialList}">
+							<li><i title="Inválido" class="fa fa-times-circle iconItemInvalido"></i><strong>#{mensagemValidacao}</strong></li>
+						</ui:repeat>
+					</ul>
+					<a href="#" id="" class="btnCinza  marginTop"><span>Gerar Escala</span></a>
+				</ui:fragment>
+
+				<ui:fragment rendered="#{empty gerarEscalaController.validacaoInicialList}">
+					<p:commandLink action="#{gerarEscalaController.gerarEscala()}" styleClass="btnLaranja marginTop buttonSelected"
+						update="messages @form :panelReverterEscala">
+						<span>Gerar Escala</span>
+					</p:commandLink>
+
+					<br></br>
+					<br></br>
+
+					<div id="divTable">
+						<!-- 							style=" width: 50%; margin: 0 auto;" -->
+						<p:dataTable var="mes" value="#{gerarEscalaController.mesEscalaDTOList}" rendered="#{not empty gerarEscalaController.mesEscalaDTOList}"
+							styleClass="estilo-border-dotted" id="tableEscalasGeradas" rowStyleClass="#{empty rowIx or rowIx mod 2 ne 0 ? 'even-row' : 'odd-row'}"
+							rowIndexVar="rowIx" rowKey="#{item.id}">
+							<p:column headerText="Mês" style="width: 40%;" styleClass="gri-alfanumericos noBackGroundImage">
+								<h:outputText value="#{mes.nomeMes}" />
+							</p:column>
+
+							<p:column headerText="Período" style="width: 40%;" styleClass="gri-codigos noBackGroundImage">
+								<h:outputText value="#{mes.periodo}" />
+							</p:column>
+
+							<p:column style="width: 20%;" styleClass="gri-codigos noBackGroundImage">
+								<h:commandLink action="#{gerarEscalaController.visualizarEscala(mes)}" styleClass="fa fa-edit marginRight iconCaixa" title="Clique aqui para visualizar">
+								</h:commandLink>
+							</p:column>
+
+						</p:dataTable>
+					</div>
+
+				</ui:fragment>
+
+			</div>
+
+
+		</h:form>
+
+		<p:outputPanel id="panelReverterEscala">
+			<p:dialog rendered="#{gerarEscalaController.existeEscalaFutura}" id="reverterModalId" widgetVar="reverterModal" styleClass="ui-dialog-background"
+				modal="true" dynamic="true" resizable="false" position="center">
+				<h:form id="excluirForm">
+					<span id="atencaoId" class="atencao2" />
+
+					<h:outputFormat style="font-weight: bold !important;" value="Já existem escalas geradas para equipe no período informado.">
+					</h:outputFormat>
+
+					<br></br>
+					<h:outputFormat style="font-weight: bold !important;" value="Para continuar é necessário apagar as escalas a partir da Data Inicio informada.">
+					</h:outputFormat>
+					<br></br>
+					<h:outputFormat style="font-weight: bold !important;" value="Deseja realmente apagá-las?">
+					</h:outputFormat>
+
+
+					<br></br>
+					<p:commandLink id="btnExcluir" styleClass="btnLaranja marginTop buttonSelected" action="#{gerarEscalaController.reverterEscala()}" onclick="showStatus();"
+						oncomplete="reverterModal.hide(); hideStatus();" update=":formPadrao">
+
+						<span><h:outputText style="width: 1; height: 1;" title="Sim" value="Sim" /></span>
+					</p:commandLink>
+					<p:commandLink id="btnNaoExcluir" styleClass="btnAzul marginTop buttonSelected" onclick="showStatus();" oncomplete="reverterModal.hide(); hideStatus();">
+
+						<span><h:outputText style="width: 1; height: 1;" title="Não" value="Não" /></span>
+					</p:commandLink>
+					<p:spacer height="30px" />
+				</h:form>
+			</p:dialog>
+		</p:outputPanel>
+
+	</ui:define>
+</ui:composition>

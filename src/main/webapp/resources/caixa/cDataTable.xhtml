@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:cc="http://java.sun.com/jsf/composite"	
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:p="http://primefaces.org/ui">
+
+<!-- INTERFACE -->
+<cc:interface>
+	<!-- Este parametro idTabela serve para criação do modal de exclusão também,
+		é necessário utilizar este parametro quando possuir mais de uma grid na mesma tela -->
+	<cc:attribute name="idTabela"	 	 type="java.lang.String" default="tabela"		required="false"	/>
+	<cc:attribute name="title"		 	 type="java.lang.String" default="Registro"		required="false"	/>
+	<cc:attribute name="controller"		 type="java.lang.Object" 						required="true"		/>
+	<cc:attribute name="lista"  		 type="java.util.List" 							required="false"	/>
+	
+	<cc:attribute name="exibeEditar" 	 type="java.lang.Boolean" default="true"		required="false" 	/>
+	<cc:attribute name="exibeExcluir" 	 type="java.lang.Boolean" default="true"		required="false" 	/>
+	<cc:attribute name="exibeDetalhar" 	 type="java.lang.Boolean" default="true"		required="false" 	/>
+	<cc:attribute name="nomeForm"		 type="java.lang.String" default="formPadrao"	required="false"	/>
+	
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+	
+	<c:set var="panelId" value="pnl-#{cc.attrs.idTabela}" />
+	<c:set var="modalId" value="dlg#{cc.attrs.idTabela}" />
+	<c:set var="lista" value="#{cc.attrs.lista eq null ? cc.attrs.controller.lista : cc.attrs.lista}" />
+	
+	<p:outputPanel id="#{panelId}">
+		<p:dataTable value="#{lista}"
+				var="item" widgetVar="dtItem" id="#{cc.attrs.idTabela}"
+				rows="10" emptyMessage="#{bundle['geral.crud.noItemFound']}"
+				paginator="true" rowStyleClass="#{empty rowIx or rowIx mod 2 ne 0 ? 'even-row' : 'odd-row'}"
+				rowIndexVar="rowIx"
+				sortFunction="#{cc.attrs.controller.sortTextIgnoreCase}"
+				styleClass="estilo-border-dotted" paginatorPosition="bottom" tableStyleClass="tablefixa"
+				currentPageReportTemplate="#{bundle['geral.crud.exibindo']} {startRecord} #{bundle['geral.label.ate']} {endRecord} #{bundle['geral.label.de']} {totalRecords}"
+				paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}">
+			
+			<f:facet name="header">
+				<p:outputPanel style="text-align:right; margin-right:-10px"	styleClass="ui-widget-auxiliar">
+					<h:outputText value="#{bundle['geral.label.pesquisar.doisPontos']}" escape="false" />
+					<h:inputText id="globalFilter" onkeyup="dtItem.filter();" style="width:150px;" maxlength="255" styleClass="semClear" />
+				</p:outputPanel>
+			</f:facet>
+			
+			<!--  ADIÇÃO DAS COLUNAS QUE SERÃO EXIBIDAS NA GRID -->
+			<cc:insertChildren />
+			
+			<!--  BOTOES EDITAR, EXCLUIR e DETALHAR-->
+			<p:column headerText="#{bundle['geral.label.acoes'].toUpperCase()}" rendered="#{cc.attrs.exibeEditar or cc.attrs.exibeExcluir or cc.attrs.exibeDetalhar}"
+				style="width:10%;" styleClass="gri-codigos noBackGroundImage">
+				<p:commandLink rendered="#{cc.attrs.exibeEditar}"
+					action="#{cc.attrs.controller.editar(item)}"
+					onclick="showStatus();"	oncomplete="hideStatus();"
+					update=":#{p:component('messages')} :#{p:component(cc.attrs.nomeForm)}"
+					title="#{bundle['geral.button.editar']}"
+					styleClass="fa fa-edit marginRight iconCaixa"
+					style = "color: #0039ba; width: 10px; text-decoration: none;">
+				</p:commandLink>
+				<p:commandLink id="excluir" rendered="#{cc.attrs.exibeExcluir}"
+					styleClass="fa fa-remove marginRight iconCaixa"
+					style="margin-left: 5px; color: #0039ba; width: 10px; text-decoration: none;" 
+					oncomplete="hideStatus();"
+					onclick="#{modalId}.show(); showStatus();"
+					title="#{bundle['geral.button.excluir']}">
+					<f:setPropertyActionListener target="#{cc.attrs.controller.instanceCRUD}" value="#{item}" />				
+				</p:commandLink>
+				<p:commandLink rendered="#{cc.attrs.exibeDetalhar}"
+					action="#{cc.attrs.controller.detalhar(item)}"
+					onclick="showStatus();"	oncomplete="hideStatus();"
+					title="#{bundle['geral.button.detalhar']}"
+					styleClass="fa fa-info-circle marginRight iconCaixa"
+					style = "margin-left: 5px !important; color: #0039ba;width: 10px; text-decoration: none;">
+				</p:commandLink>
+				
+			</p:column>
+		</p:dataTable>
+	</p:outputPanel>
+	
+	
+	<!-- CONFIRMAR EXCLUSAO -->
+	<p:dialog rendered="#{cc.attrs.exibeExcluir}" header="Exclusão #{cc.attrs.title}"
+		id="#{modalId}Id" widgetVar="#{modalId}"
+		styleClass="ui-dialog-background" modal="true" dynamic="true"
+		resizable="false" position="center"	onShow="giveFocus('excluirForm:btnExcluir')">
+		<h:form id="excluirForm">
+			<span id="atencaoId" class="atencao2" />
+			<h:outputFormat	style="font-weight: bold !important;"
+				value="#{bundle['geral.crud.confirmExcluir']}">
+				<f:param value="Equipes" />
+			</h:outputFormat>
+			<br></br>
+			<p:commandLink id="btnExcluir"
+				styleClass="btnLaranja marginTop buttonSelected"
+				action="#{cc.attrs.controller.excluir()}"
+				update=":#{p:component(panelId)} :#{p:component('messages')} :#{p:component(cc.attrs.nomeForm)}"
+				onclick="showStatus();"
+				oncomplete="#{modalId}.hide(); hideStatus();">
+				
+				<span><h:outputText style="width: 1; height: 1;" title="Sim" value="Sim" /></span>
+			</p:commandLink>
+			<p:commandLink id="btnNaoExcluir"
+				styleClass="btnAzul marginTop buttonSelected"
+				onclick="showStatus();"
+				update=":#{p:component('messages')} :#{p:component(cc.attrs.nomeForm)}"
+				oncomplete="#{modalId}.hide(); hideStatus();">
+				
+				<span><h:outputText style="width: 1; height: 1;" title="Não" value="Não" /></span>
+			</p:commandLink>
+			<p:spacer height="30px" />
+		</h:form>
+	</p:dialog>
+	
+</cc:implementation>
+</html>

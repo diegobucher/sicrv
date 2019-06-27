@@ -1,0 +1,225 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li><a href="#"><h:outputText value="#{bundle['geral.breadcrumb.parametro']}" /> </a></li>
+					<li>
+						<p:commandLink action="#{manterCurvaPadraoController.redirectTelaConsulta}">
+							<span>#{bundle['geral.breadcrumb.curvaPadrao.consultar']}</span>
+						</p:commandLink></li>
+					<li><h:outputText value="#{manterCurvaPadraoController.breadcrumb}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+	<ui:define name="html-head">
+		<script type="text/javascript">
+		   $(document).ready(function() {
+
+			   	$('.hora').mask('00:00',{
+				   	clearIfNotMatch: true
+				   	});
+
+			   	$('.hora' ).on( 'blur', function() {
+			   		valor = $( this ).val();
+			   		if(! /^(([0-1]?[0-9])|([2][0-3])):([0-5]?[0-9])?$/i.test(valor)){
+			   			 $( this ).val('');
+				    }
+			   });
+		   });
+		</script>
+	</ui:define>
+
+	<ui:define name="content-main-page">
+		<h1 class="titlePage">#{manterCurvaPadraoController.breadcrumb}</h1>
+		<ul class="campoObrigatorio">
+			<li class="obrigatorio">Obrigatório</li>
+		</ul>
+		<h:form id="formCadastro" prependId="false">
+		<p:focus id="focusFormCadastro" for="formCadastro" />
+			<p:messages id="messages" showDetail="false" />
+			<fieldset class="filtro">
+				<div id="divFiltro2" style="display: inline-block; width: 100%;">
+					<!-- Atividade -->
+					<h:outputLabel value="#{bundle['curvaPadrao.label.atividade']}" styleClass="label-button"	for="idAtividade" style="width: 305px">
+						<h:outputText styleClass="pesquisaDireta" />
+						<br />
+						<h:selectOneMenu id="idAtividade" value="#{manterCurvaPadraoController.atividade}" style="width: 300px" 
+											disabled="#{!manterCurvaPadraoController.modoEdicao and manterCurvaPadraoController.instance.id ne null}"
+											converter="omnifaces.SelectItemsConverter">
+							<f:selectItem itemLabel="Selecione"></f:selectItem>
+							<f:selectItems value="#{manterCurvaPadraoController.listaAtividade}" var="item" itemValue="#{item}" itemLabel="#{item.nome}" />
+							<f:ajax event="change" render="camposAtividade" listener="#{manterCurvaPadraoController.obterListaSubAtividade()}"/>
+						</h:selectOneMenu>
+					</h:outputLabel>
+					<!-- SubAtividade -->
+					<h:outputLabel id="camposAtividade" value="#{bundle['curvaPadrao.label.subAtividade']}" styleClass="label-button"	for="idSubAtividade idSubAtividade2" style="width: 305px">
+						
+						<br />
+						<h:selectOneMenu id="idSubAtividade" value="#{manterCurvaPadraoController.subAtividade}" 
+											style="width: 300px" converter="omnifaces.SelectItemsConverter" rendered="#{manterCurvaPadraoController.instance.id eq null}"
+											disabled="#{(empty manterCurvaPadraoController.listaSubAtividade and manterCurvaPadraoController.instance.id eq null ) 
+											or (!manterCurvaPadraoController.modoEdicao and manterCurvaPadraoController.instance.id ne null)}">
+							<f:selectItem itemLabel="Todos" ></f:selectItem>
+							<f:selectItems value="#{manterCurvaPadraoController.listaSubAtividade}" var="item" itemValue="#{item}" itemLabel="#{item.nome}" />
+						</h:selectOneMenu>
+						<h:selectOneMenu id="idSubAtividade2" value="#{manterCurvaPadraoController.subAtividade}" 
+											style="width: 300px" converter="omnifaces.SelectItemsConverter" rendered="#{manterCurvaPadraoController.instance.id ne null}"
+											disabled="#{(empty manterCurvaPadraoController.listaSubAtividade and manterCurvaPadraoController.instance.id ne null ) 
+											or (!manterCurvaPadraoController.modoEdicao and manterCurvaPadraoController.instance.id ne null)}">
+							<f:selectItems value="#{manterCurvaPadraoController.listaSubAtividade}" var="item" itemValue="#{item}" itemLabel="#{item.nome}" />
+						</h:selectOneMenu>
+					</h:outputLabel>
+					
+					<!-- Tipo de agendamento utilizado -->
+					<h:outputLabel value="Tipo" styleClass="label-button" for="idPeriodo" style="width: 120px">
+						<h:outputText styleClass="pesquisaDireta" />
+						<br />
+						<h:selectOneMenu id="idPeriodo" value="#{manterCurvaPadraoController.instance.periodo}" style="width: 120px"
+											disabled="#{!manterCurvaPadraoController.modoEdicao and manterCurvaPadraoController.instance.id ne null}" converter="omnifaces.SelectItemsConverter">
+							<f:selectItems value="#{manterCurvaPadraoController.listaPeriodo}" 
+											var="item"	itemValue="#{item}" itemLabel="#{item.descricao}" />	
+							<f:ajax event="change" render="combosAlternados"/>						
+						</h:selectOneMenu>
+					</h:outputLabel>
+
+					<h:panelGroup id="combosAlternados">
+						<!-- Dia da semana -->
+						<h:outputLabel value="#{bundle['curvaPadrao.label.dia']}" styleClass="label-button" for="idDiaSemana" style="width: 90px" rendered="#{manterCurvaPadraoController.instance.periodo.valor eq 0}">
+							<h:outputText styleClass="pesquisaDireta" />
+							<br />
+							<h:selectOneMenu id="idDiaSemana" value="#{manterCurvaPadraoController.instance.dia}" style="width: 90px"
+												disabled="#{!manterCurvaPadraoController.modoEdicao and manterCurvaPadraoController.instance.id ne null}" converter="omnifaces.SelectItemsConverter">
+								<f:selectItem itemLabel="Todos"></f:selectItem>
+								<f:selectItems value="#{manterCurvaPadraoController.listaDias}" 
+												var="item"	itemValue="#{item}" itemLabel="#{item.descricao}" />							
+							</h:selectOneMenu>
+						</h:outputLabel>
+						<!-- Data Específica-->
+						<h:outputLabel value="#{bundle['curvaPadrao.label.data']}" styleClass="label-button" for="idData" id="idLabelData" 
+										disabled="#{!manterCurvaPadraoController.modoEdicao and manterCurvaPadraoController.instance.id ne null}" rendered="#{manterCurvaPadraoController.instance.periodo.valor eq 1}">
+							<h:outputText styleClass="pesquisaDireta" />
+							<br />
+							<p:calendar id="idData" size="10" 
+								disabled="#{!manterCurvaPadraoController.modoEdicao and manterCurvaPadraoController.instance.id ne null}"
+								value="#{manterCurvaPadraoController.instance.dataEspecifica}"
+								pattern="dd/MM/yyyy" locale="pt_BR"
+								title="#{bundle['curvaPadrao.toltip.label.data']}"
+								converter="converter.DataConverter"
+								maxlength="10" 
+								onkeyup="maskIt(this,event,'##/##/#####',false,false)"
+								onkeypress="limparSessaoCodSimulacao();limparSessaoChaveSeguranca()">
+							</p:calendar>
+						</h:outputLabel>	
+					</h:panelGroup>
+					
+					<!-- Hora Inicial e Final -->
+					<h:outputLabel value="#{bundle['atividade.label.horaInicio']}" 
+									styleClass="label-button"	
+									for="idHoraInicio" 
+									style="width: 80px">
+						<h:outputText styleClass="pesquisaDireta" />
+						<br />
+						<h:selectOneMenu id="idHoraInicio" value="#{manterCurvaPadraoController.instance.horaInicial}" 
+											disabled="#{!manterCurvaPadraoController.modoEdicao and manterCurvaPadraoController.instance.id ne null}"
+											style="width: 80px" converter="omnifaces.SelectItemsConverter"	>
+							<f:selectItems value="#{manterCurvaPadraoController.listaHoras}" var="item" 
+											itemValue="#{item}" itemLabel="#{item.descricao}" />
+						</h:selectOneMenu>
+					</h:outputLabel>
+					<h:outputLabel value="#{bundle['atividade.label.horaFim']}" 
+									styleClass="label-button"	
+									for="idHoraFim" 
+									style="width: 80px">
+						<h:outputText styleClass="pesquisaDireta" />
+						<br />
+						<h:selectOneMenu id="idHoraFim" value="#{manterCurvaPadraoController.instance.horaFinal}" 
+											disabled="#{!manterCurvaPadraoController.modoEdicao and manterCurvaPadraoController.instance.id ne null}"
+											style="width: 80px" converter="omnifaces.SelectItemsConverter"	>
+							<f:selectItems value="#{manterCurvaPadraoController.listaHoras}" var="item" 
+											itemValue="#{item}" itemLabel="#{item.descricao}" />
+						</h:selectOneMenu>
+					</h:outputLabel>
+					           	
+					<!-- Quantidade de Chamados -->
+					<h:outputLabel for="idQtdChamados" value="#{bundle['curvaPadrao.label.qtdChamados']}" 
+										styleClass="label-button" style="width: 120px;">
+						<h:outputText styleClass="pesquisaDireta" />
+						<br></br>
+						<h:inputText id="idQtdChamados" size="60" maxlength="60" styleClass="inputtext"  style=" width: 120px;"
+										disabled="#{!manterCurvaPadraoController.modoEdicao and manterCurvaPadraoController.instance.id ne null}"
+										value="#{manterCurvaPadraoController.instance.quantidadeChamados}" 
+										onkeypress="return somenteNumero(event)"/>
+					</h:outputLabel>
+
+					<!-- Atendimento -->
+					<h:outputLabel for="idAtendimento" value="#{bundle['curvaPadrao.label.atendimento']}"
+									styleClass="label-button" style="margin-left:5px; width: 160px;">
+						<h:outputText styleClass="pesquisaDireta" />
+						<br></br>
+						<h:inputText id="idAtendimento" size="60" maxlength="60" styleClass="inputtext" style="width: 160px;"
+										disabled="#{!manterCurvaPadraoController.modoEdicao and manterCurvaPadraoController.instance.id ne null}"
+										value="#{manterCurvaPadraoController.instance.tempoAtendimento}" 
+										onkeypress="return somenteNumero(event)"/>
+					</h:outputLabel>					
+				</div>
+
+				<div id="divFiltro3" style="display: inline-block; width: 100%;">
+					<p:commandLink title="#{bundle['geral.button.gravar']}"
+						update="messages, @form" rendered="#{manterCurvaPadraoController.modoEdicao or manterCurvaPadraoController.instance.id eq null}"
+						styleClass="btnAzul marginTop buttonSelected"
+						action="#{manterCurvaPadraoController.salvar}">
+						<span>#{bundle['geral.button.salvar']}</span>
+					</p:commandLink>
+					<p:commandLink title="#{bundle['geral.button.cancelar']}"
+						styleClass="btnLaranja marginTop buttonSelected"
+						action="#{manterCurvaPadraoController.redirectTelaConsulta()}">
+						<span>#{bundle['geral.button.cancelar']}</span>
+					</p:commandLink>
+				</div>
+			</fieldset>
+		</h:form>
+		
+		<!-- Validar itens Duplicados -->
+		<p:dialog header="#{bundle['curvaPadrao.label.tituloPagina.duplicidade']}"
+			id="idDlgDuplicidade" widgetVar="dlgDuplicidade"
+			styleClass="ui-dialog-background" modal="true" dynamic="true"
+			resizable="false" position="center">
+			
+			<h:form id="duplicidadeForm">
+				<span id="atencaoDuplicidadeId" class="atencao2" />
+				<h:outputFormat
+					style="font-weight: bold !important;"
+					value="#{bundle['curvaPadrao.label.confirmSubstituirDuplicidade']}">
+					<f:param value="#{bundle['geral.breadcrumb.curvaPadrao']}" />
+				</h:outputFormat>
+				<br></br>
+				<p:commandLink id="btnSubstituir"
+					styleClass="btnLaranja marginTop buttonSelected"
+					action="#{manterCurvaPadraoController.salvarSubstituindo()}"
+					update=":#{p:component('formCadastro')}"
+					onclick="showStatus();"
+					oncomplete="dlgDuplicidade.hide(); hideStatus();">
+					<span><h:outputText style="width: 1; height: 1;" title="Sim" value="Sim" /></span>
+				</p:commandLink>
+				<p:commandLink id="btnNaoSubstituir"
+					styleClass="btnAzul marginTop buttonSelected"
+					action="#{manterCurvaPadraoController.ajaxHandler()}"					
+					onclick="showStatus();"
+					update=":#{p:component('formCadastro')}"
+					oncomplete="dlgDuplicidade.hide(); hideStatus();">
+					<span><h:outputText style="width: 1; height: 1;" title="Não" value="Não" /></span>
+				</p:commandLink>				
+				<p:spacer height="30px" />
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

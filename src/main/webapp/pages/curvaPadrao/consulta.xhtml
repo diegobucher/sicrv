@@ -1,0 +1,150 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:caixa="http://java.sun.com/jsf/composite/caixa">
+
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li><a href="#"><h:outputText value="#{bundle['geral.breadcrumb.parametro']}" /> </a></li>
+					<li><h:outputText value="#{bundle['geral.breadcrumb.curvaPadrao.consultar']}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+	<ui:define name="content-main-page">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{consultarCurvaPadraoController.prepareToResult}" />
+		</f:metadata>
+		<h:form id="formPadrao">
+		
+			<p:focus for="formPadrao" id="focusID" />
+			<!-- MENSAGENS -->
+			<p:messages id="messages" showDetail="false" showSummary="true" escape="true"/>
+			
+			<h1 class="titlePage">#{bundle['curvaPadrao.title.consulta']}</h1>
+			
+			<fieldset class="filtro">
+				<div id="divFiltro" style="display: inline-block; ">
+				
+				<!-- ATIVIDADE E SUBATIVIDADE -->
+					<h:outputLabel value="Atividade" styleClass="label-button"	for="idAtividade" style="width: 305px">
+						<h:outputText styleClass="pesquisaDireta" />
+						<br />
+						<h:selectOneMenu id="idAtividade" value="#{consultarCurvaPadraoController.atividade}" style="width: 300px" converter="omnifaces.SelectItemsConverter">
+							<f:selectItem itemLabel="Selecione"></f:selectItem>
+							<f:selectItems value="#{consultarCurvaPadraoController.listaAtividade}" var="item" itemValue="#{item}" itemLabel="#{item.nome}" />
+							<f:ajax event="change" render="idSubAtividade" listener="#{consultarCurvaPadraoController.obterListaSubAtividade()}"/>
+						</h:selectOneMenu>
+					</h:outputLabel>
+					<h:outputLabel value="SubAtividade" styleClass="label-button"	for="idSubAtividade" style="width: 305px">
+						<h:outputText styleClass="pesquisaDireta" />
+						<br />
+						<h:selectOneMenu id="idSubAtividade" value="#{consultarCurvaPadraoController.subAtividade}" 
+											style="width: 300px" converter="omnifaces.SelectItemsConverter"
+											disabled="#{empty consultarCurvaPadraoController.listaSubAtividade }">
+							<f:selectItem itemLabel="Todos"></f:selectItem>
+							<f:selectItems value="#{consultarCurvaPadraoController.listaSubAtividade}" var="item" itemValue="#{item}" itemLabel="#{item.nome}" />
+						</h:selectOneMenu>
+					</h:outputLabel>
+				</div>
+				<div id="divBotes">
+					<h:panelGroup>
+						<p:commandLink title="#{bundle['geral.button.consultar']}" styleClass="btnLaranja marginTop buttonSelected" 
+										update="@form messages" actionListener="#{consultarCurvaPadraoController.consultar}" >
+							<span>#{bundle['geral.button.consultar']}</span>
+						</p:commandLink>
+
+						<p:commandLink title="#{bundle['geral.button.novo']}" styleClass="btnAzul marginTop buttonSelected" 
+										action="#{consultarCurvaPadraoController.novo}">
+							<span>#{bundle['geral.button.novo']}</span>
+						</p:commandLink>
+					</h:panelGroup>
+				</div>
+			</fieldset>
+			<caixa:cDataTable title="Curva Padrão" controller="#{consultarCurvaPadraoController}" 
+								rendered="#{consultarCurvaPadraoController.pesquisaAtiva}">
+								
+				<!-- SubAtividade -->
+				<p:column rendered="#{consultarCurvaPadraoController.subAtividade eq null}"
+					headerText="#{bundle['curvaPadrao.label.subAtividade'].toUpperCase()}" 
+					filterBy="atividade.nome" style="width:13%; text-align: center !important;" sortBy="atividade.nome"
+					sortFunction="#{consultarCurvaPadraoController.sortTextIgnoreCase}"
+					filterStyle="display:none; visibility:hidden;"
+					styleClass="gri-alfanumericos noBackGroundImage">
+					<h:outputText value="#{item.atividade.nome}" />
+				</p:column>
+
+				<!-- Periodo ou Tipo -->
+				<p:column
+					headerText="#{bundle['curvaPadrao.label.tipo'].toUpperCase()}"
+					filterBy="periodo.descricao" style="width:11%; text-align: center !important;" sortBy="periodo.descricao"
+					sortFunction="#{consultarCurvaPadraoController.sortTextIgnoreCase}"
+					filterStyle="display:none; visibility:hidden;"
+					styleClass="gri-alfanumericos noBackGroundImage">
+					<h:outputText value="#{item.periodo.descricao}" />
+				</p:column>
+				
+				<!-- Dia ou Data -->
+				<p:column
+					headerText="#{bundle['curvaPadrao.label.dia'].toUpperCase()}"
+					style="width:9%; text-align: center !important;"
+					filterStyle="display:none; visibility:hidden;"
+					filterBy="dia" sortBy="dia"
+					styleClass="gri-alfanumericos noBackGroundImage">
+					<h:outputText value="#{item.dia.descricao}" rendered="#{item.dia.descricao ne null}" />
+					<h:outputText value="#{item.dataEspecifica}" rendered="#{item.dataEspecifica ne null}" >
+						<f:convertDateTime pattern="dd/MM/yyyy" />
+					</h:outputText>
+				</p:column>
+				
+				<!-- HORA INICIO -->
+				<p:column
+					headerText="#{bundle['curvaPadrao.label.horaInicio'].toUpperCase()}"
+					filterBy="horaInicial.descricao" sortBy="horaInicial.descricao"
+					style="width:10%; text-align:center;" 
+					sortFunction="#{consultarCurvaPadraoController.sortTextIgnoreCase}"
+					filterStyle="display:none; visibility:hidden;"
+					styleClass="gri-codigos noBackGroundImage">
+					<h:outputText value="#{item.horaInicial.descricao}" />
+				</p:column>
+				
+				<!-- HORA FIM -->
+				<p:column
+					headerText="#{bundle['curvaPadrao.label.horaFim'].toUpperCase()}"
+					filterBy="horaFinal.descricao" sortBy="horaFinal.descricao"
+					style="width:10%; text-align:center; " 
+					sortFunction="#{consultarCurvaPadraoController.sortTextIgnoreCase}"
+					filterStyle="display:none; visibility:hidden;"
+					styleClass="gri-codigos noBackGroundImage">
+					<h:outputText value="#{item.horaFinal.descricao}" />
+				</p:column>
+				
+				<!-- Quantidade de Chamados -->
+				<p:column
+					headerText="#{bundle['curvaPadrao.label.qtdChamados'].toUpperCase()}"
+					filterBy="quantidadeChamados" sortBy="quantidadeChamados" style="width:18%; " 
+					filterStyle="display:none; visibility:hidden;"
+					styleClass="gri-codigos noBackGroundImage">
+					<h:outputText value="#{item.quantidadeChamados}" />
+				</p:column>
+				
+				<!-- Tempo médio -->
+				<p:column
+					headerText="#{bundle['curvaPadrao.labelgrid.tempoMedio'].toUpperCase()}"
+					filterBy="tempoAtendimento" sortBy="tempoAtendimento" style="width:16%;" 
+					filterStyle="display:none; visibility:hidden;"
+					styleClass="gri-codigos noBackGroundImage">
+					<h:outputText value="#{item.tempoAtendimento}" />
+				</p:column>
+			</caixa:cDataTable>		
+		</h:form>		
+	</ui:define>
+</ui:composition>

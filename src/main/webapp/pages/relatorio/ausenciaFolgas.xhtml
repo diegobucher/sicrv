@@ -1,0 +1,156 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:caixa="http://java.sun.com/jsf/composite/caixa">
+
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li><a href="#"><h:outputText value="#{bundle['geral.breadcrumb.relatorio']}" /> </a></li>
+					<li><h:outputText value="#{bundle['geral.breadcrumb.relatorio.ausenciaFolgas']}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+	
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+	
+	<ui:define name="content-main-page">
+	
+		<h:form id="formConsulta">
+		
+			<p:focus id="focusFormConsulta" for="formConsulta" />
+			<p:messages id="messages" showDetail="false" />
+			
+			<h1 class="titlePage">#{bundle['ausenciaFolga.title.consulta']}</h1>
+			
+			<fieldset class="filtro">
+				<div id="divFiltro" style="display: inline-block;">
+					
+					<!-- Para funcionar deve possuir o id da matricula com este nome 'matricula' - Para renderizar o campo -->
+					<caixa:cInputMatricula id="matricula" title="#{bundle['equipe.label.matricula']}" controller="#{relatorioAusenciaFolgaController}" 
+					value="#{relatorioAusenciaFolgaController.empregado.matricula}" exibeModal="true" 
+					nomeForm="formConsulta" lista="#{relatorioAusenciaFolgaController.listEmpregado}"
+					render=":formConsulta:messages :formConsulta:nomeEmpregado:item :formConsulta:matricula:item" /> 
+					
+					
+					<!-- Nome Empregado -->
+					<caixa:cInputText width="330" id="nomeEmpregado" title="#{bundle['ausenciaEmpregado.label.nomeEmpregado']}" value="#{relatorioAusenciaFolgaController.empregado.nome.toUpperCase()}" disabled="true" />
+					
+					<!-- Data Início -->
+					<caixa:cInputData title="#{bundle['geral.label.data.inicio']}" value="#{relatorioAusenciaFolgaController.ausencia.dataInicio}" required="true"/>
+
+					<!-- Data Fim -->
+					<caixa:cInputData title="#{bundle['geral.label.data.fim']}" value="#{relatorioAusenciaFolgaController.ausencia.dataFim}" required="true" />
+				</div>
+				<div id="divBotes">
+					<h:panelGroup>
+						<p:commandLink title="#{bundle['geral.button.consultar']}" styleClass="btnAzul marginTop buttonSelected" 
+										update="@form, messages" actionListener="#{relatorioAusenciaFolgaController.consultar}" >
+							<span>#{bundle['geral.button.consultar']}</span>
+							<f:ajax execute="matricula" render="nomeEmpregado"/>
+						</p:commandLink>
+
+					</h:panelGroup>
+				</div>
+			</fieldset>
+			
+			
+			<!-- PAINEL DE AUSENCIA EMPREGADO - DATATABLE  -->
+			<p:outputPanel id="pnlAusenciaEmpregado" rendered="#{relatorioAusenciaFolgaController.pesquisaAtiva}">
+				<p:dataTable 
+					id="ausenciaEmpregadoDataTable"
+					value="#{relatorioAusenciaFolgaController.ausenciaFolgaList}"
+					filteredValue="#{relatorioAusenciaFolgaController.ausenciaFolgaFiltroList}"
+					var="ausencia" 
+					widgetVar="dtAusencia" 
+					rows="10" 
+					emptyMessage="#{bundle['geral.crud.noItemFound']}"
+					paginator="true" 
+					rowStyleClass="#{empty rowIx or rowIx mod 2 ne 0 ? 'even-row' : 'odd-row'}"
+					rowIndexVar="rowIx" 
+					styleClass="estilo-border-dotted" 
+					sortBy="nome"
+					sortFunction="#{relatorioAusenciaFolgaController.sortTextIgnoreCase}"
+					paginatorPosition="bottom" 
+					tableStyleClass="tablefixa"
+					currentPageReportTemplate="#{bundle['geral.crud.exibindo']} {startRecord} #{bundle['geral.label.ate']} {endRecord} #{bundle['geral.label.de']} {totalRecords}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" >
+
+
+					<f:facet name="header">
+						<p:outputPanel style="text-align:right; margin-right:-10px"
+							styleClass="ui-widget-auxiliar">
+							<h:outputText
+								value="#{bundle['geral.label.pesquisar.doisPontos']}"
+								escape="false" />
+							<h:inputText id="globalFilter"
+								value="#{relatorioAusenciaFolgaController.filtro}"
+								onkeyup="dtAusencia.filter();" style="width:150px;"
+								maxlength="255" styleClass="semClear" />
+						</p:outputPanel>
+					</f:facet>
+
+
+					<!-- MATRÍCULA -->
+					<p:column
+						headerText="#{bundle['ausenciaEmpregado.labelgrid.matricula']}"
+						filterBy="matricula" style="width:10%" sortBy="matricula"
+						filterStyle="display:none; visibility:hidden;"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{ausencia.matricula}" />
+					</p:column>
+					
+					<!-- NOME EMPREGADO -->
+					<p:column
+						headerText="#{bundle['ausenciaEmpregado.labelgrid.nomeEmpregado']}"
+						filterBy="nome" style="width:25%" sortBy="nome"
+						filterStyle="display:none; visibility:hidden;"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{ausencia.nome.toUpperCase()}" />
+					</p:column>
+
+					<!-- MOTIVO -->
+					<p:column
+						headerText="#{bundle['ausenciaEmpregado.labelgrid.motivo']}"
+						filterBy="motivo" style="width:25%; text-align:center;" sortBy="motivo"
+						filterStyle="display:none; visibility:hidden;"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{ausencia.motivo}" />
+					</p:column>
+					
+					<!--  DATA INICIO -->
+					<p:column
+						headerText="#{bundle['ausenciaEmpregado.labelgrid.dataInicio']}"
+						filterBy="dataInicio" style="width:12%; text-align:center;" sortBy="dataInicio"
+						filterStyle="display:none; visibility:hidden;"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{ausencia.dataInicio}" >
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+					
+					<!-- DATA FIM -->
+					<p:column
+						headerText="#{bundle['ausenciaEmpregado.labelgrid.dataFim']}"
+						filterBy="dataFim" style="width:12%; text-align:center; " sortBy="dataFim"
+						filterStyle="display:none; visibility:hidden;"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{ausencia.dataFim}" >
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+				</p:dataTable>
+				
+				
+			</p:outputPanel>			
+		</h:form>
+		
+		
+	</ui:define>
+</ui:composition>

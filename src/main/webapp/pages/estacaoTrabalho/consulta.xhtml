@@ -1,0 +1,258 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:caixa="http://java.sun.com/jsf/composite/caixa">
+
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li><a href="#"><h:outputText value="#{bundle['geral.breadcrumb.gerenciamento']}" /> </a></li>
+					<li><h:outputText value="#{bundle['geral.breadcrumb.estacaoTrabalho.consultar']}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+	
+	<ui:define name="content-main-page">
+	            
+		<h:form id="formConsulta">
+		
+			<p:focus id="focusFormConsulta" for="formConsulta" />
+			<p:messages id="messages" showDetail="false" />
+			
+			<h1 class="titlePage">#{bundle['estacaoTrabalho.title.consulta']}</h1>
+			<ul class="campoObrigatorio">
+            <li class="obrigatorio">Obrigatório</li>
+        </ul>    
+        
+			<fieldset class="filtro">
+				<div id="divFiltro" style="display: inline-block;">
+					
+					<!-- Nome da Estação -->
+
+					<caixa:cInputText width="330" id="nomeEmpregado" title="#{bundle['estacaoTrabalho.label.nomeEstacao']}" 
+					value="#{consultarEstacaoTrabalhoController.instanceCRUD.nome}" maxlength="50" required="true"/>
+					
+				</div>
+				<div id="divBotes">
+					<h:panelGroup>
+						<p:commandLink title="#{bundle['geral.button.consultar']}" styleClass="btnLaranja marginTop buttonSelected" 
+										update="@form messages" actionListener="#{consultarEstacaoTrabalhoController.consultar}" 
+										rendered="false">
+							<span>#{bundle['geral.button.consultar']}</span>
+						</p:commandLink>
+
+						<p:commandLink title="#{bundle['geral.button.adicionar']}" styleClass="btnAzul marginTop buttonSelected" 
+										action="#{consultarEstacaoTrabalhoController.adicionarEstacao()}" update="@form messages">
+							<span>#{bundle['geral.button.adicionar']}</span>
+						</p:commandLink>
+					</h:panelGroup>
+				</div>
+			</fieldset>
+			
+			<!-- PAINEL DE ESTACAO DE TRABALHO - DATATABLE  -->
+			<p:outputPanel id="pnlAusenciaEmpregado">
+				<p:dataTable 
+					id="ausenciaEmpregadoDataTable"
+					value="#{consultarEstacaoTrabalhoController.lista}"
+					var="estacao" 
+					sortBy="nome"
+					widgetVar="dtEstacao" 
+					rows="10" 
+					emptyMessage="#{bundle['geral.crud.noItemFound']}"
+					paginator="true" 
+					rowStyleClass="#{empty rowIx or rowIx mod 2 ne 0 ? 'even-row' : 'odd-row'}"
+					rowIndexVar="rowIx" 
+					sortFunction="#{consultarEstacaoTrabalhoController.sortTextIgnoreCase}"
+					styleClass="estilo-border-dotted" 
+					paginatorPosition="bottom" 
+					tableStyleClass="tablefixa"
+					currentPageReportTemplate="#{bundle['geral.crud.exibindo']} {startRecord} #{bundle['geral.label.ate']} {endRecord} #{bundle['geral.label.de']} {totalRecords}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" >
+
+
+					<f:facet name="header">
+						<p:outputPanel style="text-align:right; margin-right:-10px"
+							styleClass="ui-widget-auxiliar">
+							<h:outputText
+								value="#{bundle['geral.label.pesquisar.doisPontos']}"
+								escape="false" />
+							<h:inputText id="globalFilter"
+								value="#{consultarEstacaoTrabalhoController.filtro}"
+								onkeyup="dtEstacao.filter();" style="width:150px;"
+								maxlength="255" styleClass="semClear" />
+						</p:outputPanel>
+					</f:facet>
+
+
+					<!-- Nome da Estação -->
+					<p:column
+						headerText="#{bundle['estacaoTrabalho.label.nomeEstacao']}"
+						filterBy="nome" style="width:20%" sortBy="nome" sortFunction="#{consultarEstacaoTrabalhoController.sortTextIgnoreCase}"
+						filterStyle="display:none; visibility:hidden;"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{estacao.nome}" />
+					</p:column>
+					
+					<!-- Situação-->
+					<p:column
+						headerText="#{bundle['estacaoTrabalho.label.situacao']}"
+						style="width:10%" sortBy="situacao" sortFunction="#{consultarEstacaoTrabalhoController.sortTextIgnoreCase}"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{estacao.situacao}" />
+					</p:column>
+					
+					<!-- Motivo -->
+					<p:column
+						headerText="#{bundle['estacaoTrabalho.label.motivo']}"
+						style="width:60%" sortBy="motivo" sortFunction="#{consultarEstacaoTrabalhoController.sortTextIgnoreCase}"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{estacao.motivo}" />
+					</p:column>
+					
+					
+					<!--  BOTOES EDITAR e EXCLUIR -->
+					<p:column 
+						headerText="#{bundle['estacaoTrabalho.label.acoes']}" 
+						style="width:10%;" styleClass="noBackGroundImage">
+						
+						<p:commandLink id="ativar" 
+							actionListener="#{consultarEstacaoTrabalhoController.detalharEstacao(estacao)}"
+							onclick="dlgAtivar.show();"
+							styleClass="fa fa-power-off marginRight iconCaixa"
+							rendered="#{!estacao.ativa}"
+							style="margin-left: 15px; color: #0039ba; width: 10px; text-decoration: none;" 
+							title="#{bundle['estacaoTrabalho.toltip.label.ativarDesativar.hint']}">				
+						</p:commandLink>
+						
+						<p:commandLink id="desativar" 
+							actionListener="#{consultarEstacaoTrabalhoController.detalharEstacao(estacao)}"
+							onclick="dlgInativar.show();" update=":inativarForm"
+							styleClass="fa fa-power-off marginRight iconCaixa"
+							rendered="#{estacao.ativa}"
+							style="margin-left: 15px; color: #0039ba; width: 10px; text-decoration: none;" 
+							title="#{bundle['estacaoTrabalho.toltip.label.ativarDesativar.hint']}">				
+						</p:commandLink>
+						
+						<p:commandLink id="excluirSR" 
+						    actionListener="#{consultarEstacaoTrabalhoController.detalharEstacao(estacao)}"
+							onclick="dlgExcluir.show();"
+							styleClass="fa fa-remove marginRight iconCaixa"
+							style="margin-left: 15px; color: #0039ba; width: 10px; text-decoration: none;" 
+							title="#{bundle['estacaoTrabalho.toltip.label.excluir.hint']}">				
+						</p:commandLink>
+						
+					</p:column>
+					
+				</p:dataTable>
+			</p:outputPanel>			
+		</h:form>
+		
+		<!-- CONFIRMAR ATIVACAO -->
+		<p:dialog header="#{bundle['estacaoTrabalho.label.tituloPagina.ativar']}"
+			id="dlgAtivarId" widgetVar="dlgAtivar"
+			styleClass="ui-dialog-background" modal="true" dynamic="true"
+			resizable="false" position="center"	>
+			<h:form id="ativarForm">
+			
+				<p:messages id="messages" showDetail="false" />
+			
+				<span id="atencaoEstacaoId" class="atencao2" />
+				
+				<i class="fa fa-warning iconCaixa floatLeft marginRight" style="cursor:default;"></i>
+
+				<h:outputText value="#{bundle['estacaoTrabalho.label.confirmar.ativar']}" style="font-weight: bold"/>
+				<br></br>
+				
+				<div>
+					<h:panelGroup>
+
+						<p:commandLink title="#{bundle['geral.button.sim']}" styleClass="btnAzul marginTop buttonSelected" 
+										update="@form messages"
+										action="#{consultarEstacaoTrabalhoController.ativarEstacao()}">
+							<span>#{bundle['geral.button.sim']}</span>
+						</p:commandLink>
+
+						<p:commandLink title="#{bundle['geral.button.nao']}" styleClass="btnLaranja marginTop buttonSelected" 
+							onclick="dlgAtivar.hide();">
+							<span>#{bundle['geral.button.nao']}</span>
+						</p:commandLink>
+					</h:panelGroup>
+				</div>
+			</h:form>
+		</p:dialog>
+		
+		<!-- CONFIRMAR INATIVACAO -->
+		<p:dialog header="#{bundle['estacaoTrabalho.label.tituloPagina.desativar']}"
+			id="dlgInativarId" widgetVar="dlgInativar"
+			styleClass="ui-dialog-background" modal="true" dynamic="true"
+			resizable="false" position="center"	>
+			<h:form id="inativarForm">
+			
+				<p:messages id="messages" showDetail="false" />
+			
+				<span id="atencaoEstacaoId" class="atencao2" />
+				
+				<h:outputLabel value="#{bundle['estacaoTrabalho.label.motivo']}">
+					<h:outputText styleClass="pesquisaDireta" />
+					<br/>
+					<h:inputTextarea value="#{consultarEstacaoTrabalhoController.estacaoTrabalhoDetalhe.motivo}" style="width:340px; height: 80px"
+						maxlength="300" />
+						
+				</h:outputLabel> 	
+				
+				<br></br>
+
+				<div>
+					<h:panelGroup>
+
+						<p:commandLink title="#{bundle['geral.button.sim']}" styleClass="btnAzul marginTop buttonSelected" 
+										update="@form messages"
+										action="#{consultarEstacaoTrabalhoController.desativarEstacao()}">
+							<span>#{bundle['geral.button.sim']}</span>
+						</p:commandLink>
+
+						<p:commandLink title="#{bundle['geral.button.nao']}" styleClass="btnLaranja marginTop buttonSelected" 
+							onclick="dlgInativar.hide();">
+							<span>#{bundle['geral.button.nao']}</span>
+						</p:commandLink>
+					</h:panelGroup>
+				</div>
+			</h:form>
+		</p:dialog>
+		
+		<!-- CONFIRMAR EXCLUSAO -->
+		<p:dialog header="#{bundle['estacaoTrabalho.label.tituloPagina.excluir']}"
+			id="dlgExcluirId" widgetVar="dlgExcluir"
+			styleClass="ui-dialog-background" modal="true" dynamic="true"
+			resizable="false" position="center">
+			<h:form id="excluirForm">
+				<span id="atencaoEstacaoId" class="atencao2" />
+				
+				<div id="divBotes">
+					<h:panelGroup>
+						<p:commandLink title="#{bundle['geral.button.sim']}" styleClass="btnAzul marginTop buttonSelected" 
+										update="@form :formConsulta"
+										oncomplete="dlgExcluir.hide();"
+										action="#{consultarEstacaoTrabalhoController.removerEstacao()}">
+							<span>#{bundle['geral.button.sim']}</span>
+						</p:commandLink>
+						
+
+						<p:commandLink title="#{bundle['geral.button.nao']}" styleClass="btnLaranja marginTop buttonSelected" 
+							onclick="dlgExcluir.hide();">
+							<span>#{bundle['geral.button.nao']}</span>
+						</p:commandLink>
+					</h:panelGroup>
+				</div>
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>

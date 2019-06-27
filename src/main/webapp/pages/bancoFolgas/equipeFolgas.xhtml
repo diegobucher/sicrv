@@ -1,0 +1,236 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:caixa="http://java.sun.com/jsf/composite/caixa">	
+	
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li>
+						<a href="#"><h:outputText value="#{bundle['geral.breadcrumb.gerenciamento']}" /> </a>
+					</li>
+					<li>Folga</li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="html-head">
+		<h:outputStylesheet library="css" name="minhaEscala.css" />
+		<h:outputStylesheet library="css" name="calendario.css" />
+		<h:outputStylesheet library="css" name="dataTables.css" />
+		
+		<h:outputScript library="js" name="jquery.dataTables.min.js" />
+		<h:outputScript library="js" name="equipeFolgas.js" />
+
+	</ui:define>
+
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+
+	<ui:define name="content-main-page">
+	
+	    <h1>Folga</h1>
+		<h:form id="calendarioFolgasForm">
+			<p:messages id="messages" showDetail="false" />
+		
+			<fieldset class="filtro">
+			
+				<caixa:cInputData title="Data Início" value="#{equipeFolgasController.dataInicio}"  required="true" />
+				<caixa:cInputData title="Data Fim" value="#{equipeFolgasController.dataFim}"  required="true" />
+				
+				<p:commandLink action="#{equipeFolgasController.buscarFolgas()}" update="@form" oncomplete="acoesPosPesquisar();"
+						styleClass="btnAzul marginTop marginTop20">
+					<span>Consultar</span>
+				</p:commandLink>
+					
+			</fieldset>
+			
+			<div class="colLeft">
+				<ui:repeat var="mesDTO" value="#{equipeFolgasController.mesDTOList}">
+		            <table class="escala">
+						<thead>
+							<tr>
+								<td colspan="4" class="selectMeses">
+									#{mesDTO.nomeMes} #{mesDTO.anoInt}
+								</td>
+							</tr>
+		                	<tr>
+		                        <th>Segunda</th>
+		                        <th>Terça</th>
+		                        <th>Quarta</th>
+		                        <th>Quinta</th>
+		                        <th>Sexta</th>
+		                        <th>Sábado</th>
+		                        <th>Domingo</th>
+		                    </tr>
+		                </thead>
+		                <tbody>
+		                	<ui:repeat var="semanaDTO" value="#{mesDTO.semanaDTOList}">
+		                		<tr>
+		         			   		<ui:repeat var="diaDTO" value="#{semanaDTO.diaDTOList}">
+		                				<td class="#{diaDTO.classeCss}">
+		                				 		<div class="dia">
+		                				 			#{diaDTO.numeroDia}
+		                				 		</div>
+			                				 	<ui:fragment rendered="#{not empty diaDTO.saldoFolga}">
+			                				 		<div class="tipoFolga">
+			                				 			Saldo: #{diaDTO.saldoFolga}
+			                				 		</div>
+			                				 	</ui:fragment>
+			                				 	<div class="data" style="display:none">
+			                				 		<h:outputText value="#{diaDTO.data}">
+			                				 			<f:convertDateTime pattern="dd/MM/yyyy"/>
+			                				 		</h:outputText>
+			                				 	</div>
+		                				</td>
+		                		    </ui:repeat>
+		                		</tr>
+							</ui:repeat>
+		                </tbody>
+		            </table>
+				</ui:repeat>
+			</div><!--Fim colLeft-->
+		
+ 			<p:remoteCommand action="#{equipeFolgasController.detalharDia()}" name="detalharDia" oncomplete="carregarDataTables()"
+ 				update=":formModal">
+ 			</p:remoteCommand>
+ 			
+		</h:form>     
+
+        <div class="colRight">
+			<ul class="legenda">
+				<h3>Legenda</h3>
+				<li><div class="iconLegenda folgaEquipe"></div>Folga equipe</li>
+            </ul>
+        </div><!--Fim colRight-->
+		
+		<!--MEU MODAL-->
+	    <div id="id_modal" class="modal">
+	        <div class="modal-content modal-width">
+				<h:form id="formModal" prependId="false">
+		            <header class=" color-blue">
+		                <span class="closebtn btn_fecha_modal" onclick="hideModal()"><h:outputText value="&amp;times;" escape="false"/></span>
+		                <h1 class="">Data:
+		                	<h:outputText value="#{equipeFolgasController.diaDetalhe}" >
+		                		<f:convertDateTime pattern="dd/MM/yyyy"/>
+		                	</h:outputText>
+		                </h1>
+		            </header>
+		            <div class="modal-container">
+		            
+            			<p:messages id="messagesModal" showDetail="false" />
+						
+						<ui:fragment rendered="#{equipeFolgasController.isDiaDetalheDiaUtil}">
+			                <label>Empregado<br/>
+								<h:selectOneMenu id="empregado" value="#{equipeFolgasController.empregadoSelecionado}"
+									converter="omnifaces.SelectItemsConverter">
+									<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+									<f:selectItems value="#{equipeFolgasController.empregadosSemFolgas}" 
+										var="item" itemValue="#{item}" itemLabel="#{item.nome}" />
+								</h:selectOneMenu>
+			                </label>
+			                
+			                <p:commandLink actionListener="#{equipeFolgasController.adicionarFolga}" update="@form" oncomplete="carregarDataTables()"
+									styleClass="btnAzul marginTop20 marginBottom">
+								<span>Incluir folga</span>
+							</p:commandLink>
+			                
+							<h3 class="marginTop20">Empregados com folga cadastrada</h3>
+			
+							<h:dataTable  id="folga_cadastrada" cellpadding="0" width="100%"
+								rendered="#{not empty equipeFolgasController.empregadosComFolgas}"
+								styleClass="stripe compact" 
+								value="#{equipeFolgasController.empregadosComFolgas}" var="empregado"
+								columnClasses="col50,col40,col10">
+								<h:column>
+				    				<f:facet name="header">
+				    					<h:outputText value="Nome"/>
+				    				</f:facet>
+				    				<h:outputText value="#{empregado.nome}" styleClass="dt-nowrap dt-center" />
+				    			</h:column>
+				    			<h:column>
+				    				<f:facet name="header">Horário</f:facet>
+				    				#{equipeFolgasController.empregadoHorarioMapa[empregado]}
+				    			</h:column>
+								<h:column>
+				    				<f:facet name="header">Ação</f:facet>
+				    				<h:panelGroup styleClass="dt-center">
+				    				   <p:commandLink actionListener="#{equipeFolgasController.removerFolga(empregado)}" update="@form" oncomplete="carregarDataTables()"
+												styleClass="fa fa-remove marginRight iconCaixa" title="Excluir">
+										</p:commandLink>
+				    				</h:panelGroup>
+				    			</h:column>
+							</h:dataTable>
+							
+							<ui:fragment rendered="#{empty equipeFolgasController.empregadosComFolgas}">
+								<table id="folga_cadastrada" class="stripe compact" width="100%"  cellpadding="0">
+				                   <thead>
+										<tr>
+											<th width="50%" class="dt-head-left">Nome</th>
+											<th width="40%" class="dt-head-center">Horário</th>
+											<th width="10%" class="dt-head-center">Ação</th>
+										</tr>
+				                    </thead>
+			                    </table>
+							</ui:fragment>
+						</ui:fragment>
+		                
+		
+		               <h3 class="#{equipeFolgasController.isDiaDetalheDiaUtil? 'marginTop20' : ''}">Empregados Ausentes</h3>
+						
+						<h:dataTable  id="table_repouso_remunerado" styleClass="stripe compact" cellpadding="0" width="100%"
+							rendered="#{not empty equipeFolgasController.empregadosAusenteList}"
+							value="#{equipeFolgasController.empregadosAusenteList}" var="empregado"
+							columnClasses="col40,col40,col15">
+							<h:column>
+			    				<f:facet name="header">Nome</f:facet>
+			    				#{empregado.nome}
+			    			</h:column>
+							<h:column>
+			    				<f:facet name="header">Motivo</f:facet>
+			    				#{equipeFolgasController.empregadoAusenciaMapa[empregado]}
+			    			</h:column>
+							<h:column>
+			    				<f:facet name="header">Horário</f:facet>
+			    				#{equipeFolgasController.empregadoHorarioMapa[empregado]}
+			    			</h:column>
+						</h:dataTable>
+						<ui:fragment rendered="#{empty equipeFolgasController.empregadosAusenteList}">
+							<table id="table_repouso_remunerado" class="stripe compact" width="100%"  cellpadding="0">
+			                   <thead>
+									<tr>
+										<th width="40%" class="dt-head-left">Nome</th>
+										<th width="40%" class="dt-head-center">Motivo</th>
+										<th width="15%" class="dt-head-center">Horário</th>
+									</tr>
+			                    </thead>
+		                    </table>
+						</ui:fragment>
+						
+		            </div>
+		            <footer class="color-grey">
+		            
+		                <p:commandLink actionListener="#{equipeFolgasController.salvar()}" update="@form :calendarioFolgasForm" oncomplete="acoesPosPesquisar()"
+		                	rendered="#{equipeFolgasController.isDiaDetalheDiaUtil}"
+								styleClass="btnAzul floatRight btn_fecha_modal" title="Salvar">
+							<span>Salvar</span>
+						</p:commandLink>
+									
+		                <a href="#" id="" class="btnLaranja floatRight btn_fecha_modal" onclick="hideModal()"><span>Cancelar</span></a>
+						<div class="clear"></div>
+		            </footer>
+		            
+				</h:form>
+	        </div>
+	    </div>
+<!--/MEU MODAL-->
+		
+		
+	</ui:define>
+</ui:composition>

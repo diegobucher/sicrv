@@ -1,0 +1,51 @@
+@charset "utf-8";
+/* CSS Document */
+/***| Menu Dropdowns|***/
+
+
+/*Configurações Padrões*/
+ul.menu, .menu li, .menu a{ margin:0; padding:0; list-style:none; text-decoration:none;}
+ul.menu ul{ position:absolute; z-index:2; display:none; box-shadow:2px 2px 8px #ccc;}
+
+
+/* Configurações nivel 1*/
+ul.menu{ float:left;  font-size:14px; padding:0 5px;}
+.menu li{ float:left; width:auto; position:relative;}
+.menu li a{ display:block; padding:0 30px 0 0;  float:left; transition:all 0.1s linear; }
+
+/* Configurações nivel 2*/
+.menu li:hover > ul.submenu-1{ display:block; left:0; padding:5px; width:200px; border-radius:0 0 5px 5px;   }
+.menu ul.submenu-1 a{  width:160px; padding:0 20px; border-radius:5px;  }
+
+/* Configurações nivel 2*/
+.menu li:hover > ul.submenu-2{ display:block; top:0; left:199px; padding:5px; width:200px;  border-radius: 0 5px 5px 5px; }
+.menu ul.submenu-2 a{  width:160px; padding:0 20px; border-radius:5px; }
+
+/* Configurações nivel 3*/
+.menu li:hover > ul.submenu-3{ display:block; top:0; left:199px; padding:5px; width:200px;  border-radius: 0 5px 5px 5px; }
+.menu ul.submenu-3 a{  width:160px; padding:0 20px; border-radius:5px; }
+
+
+/*Configurações de cores*/
+
+/*nivel 1*/
+.menu a{ color:#0039ba; font-weight:bold;line-height:57px; height:57px; no-repeat 100% 25px;}
+.menu li:hover > a{ text-decoration:underline; } /*Configuração do menu hover*/
+
+/*nivel 2*/
+.submenu-1{ background:#f0f0f0; border:1px solid #ccc; top:50px;}
+.submenu-1 a{color:#333; line-height:35px; height:35px; position:relative;}
+.submenu-1 li:hover > a{ background-color:#0039ba; color:#fff; text-decoration:none; line-height:35px; } /*Configuração do menu hover*/
+.submenu-1 a i{ position:absolute; top:10px; right:2px;}
+
+/*nivel 3*/
+.submenu-2{ background:#f0f0f0;border:1px solid #ccc;}
+.submenu-2 a{color:#333;line-height:35px; height:35px;}
+.submenu-2 li:hover > a{ background-color:#0039ba; text-decoration:none;} /*Configuração do menu hover*/
+
+/*nivel 3*/
+.submenu-3{ background:#f0f0f0; border:1px solid #ccc;}
+.submenu-3 a{color:#333;line-heght:35px; height:35px;}
+.submenu-3 li:hover > a{ background-color:#0039ba; text-decoration:none;} /*Configuração do menu hover*/
+
+

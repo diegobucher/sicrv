@@ -1,0 +1,222 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:caixa="http://java.sun.com/jsf/composite/caixa">
+
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li><a href="#"><h:outputText value="#{bundle['geral.breadcrumb.gerenciamento']}" /> </a></li>
+					<li><h:outputText value="#{bundle['geral.breadcrumb.ausenciaEmpregado.consultar']}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+	
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+	
+	<ui:define name="content-main-page">
+	
+		<f:metadata>
+			<f:event type="preRenderView"
+				listener="#{consultarAusenciaEmpregadoController.prepareToResult}" />
+		</f:metadata>
+		<h:form id="formConsulta">
+		
+			<p:focus id="focusFormConsulta" for="formConsulta" />
+			<p:messages id="messages" showDetail="false" />
+			
+			<h1 class="titlePage">#{bundle['ausenciaEmpregado.title.consulta']}</h1>
+			
+			<fieldset class="filtro">
+				<div id="divFiltro" style="display: inline-block;">
+					
+					<!-- Para funcionar deve possuir o id da matricula com este nome 'matricula' - Para renderizar o campo -->
+					<caixa:cInputMatricula id="matricula" title="#{bundle['equipe.label.matricula']}" controller="#{consultarAusenciaEmpregadoController}" 
+					value="#{consultarAusenciaEmpregadoController.empregado.matricula}" exibeModal="true" 
+					nomeForm="formConsulta" lista="#{consultarAusenciaEmpregadoController.listEmpregado}"
+					render=":formConsulta:messages :formConsulta:nomeEmpregado:item :formConsulta:matricula:item" /> 
+					
+					
+					<!-- Nome Empregado -->
+					<caixa:cInputText width="330" id="nomeEmpregado" title="#{bundle['ausenciaEmpregado.label.nomeEmpregado']}" value="#{consultarAusenciaEmpregadoController.empregado.nome.toUpperCase()}" disabled="true" />
+					
+					<!-- Data Início -->
+					<caixa:cInputData title="#{bundle['geral.label.data.inicio']}" value="#{consultarAusenciaEmpregadoController.ausencia.dataInicio}" />
+
+					<!-- Data Fim -->
+					<caixa:cInputData title="#{bundle['geral.label.data.fim']}" value="#{consultarAusenciaEmpregadoController.ausencia.dataFim}" />
+
+					<caixa:cCombo width="200" title="Motivo" lista="#{manterAusenciaEmpregadoController.listaMotivos}" value="#{consultarAusenciaEmpregadoController.ausencia.motivo}"
+						var="item"	itemValue="#{item}" itemLabel="#{item.descricao}" />						
+				</div>
+				<div id="divBotes">
+					<h:panelGroup>
+						<p:commandLink title="#{bundle['geral.button.consultar']}" styleClass="btnLaranja marginTop buttonSelected" 
+										update="@form, messages" actionListener="#{consultarAusenciaEmpregadoController.consultar}" >
+							<span>#{bundle['geral.button.consultar']}</span>
+							<f:ajax execute="matricula" render="nomeEmpregado"/>
+						</p:commandLink>
+
+						<p:commandLink title="#{bundle['geral.button.novo']}" styleClass="btnAzul marginTop buttonSelected" 
+										action="#{consultarAusenciaEmpregadoController.redirectTelaManter}" process="@this" global="false">
+							<span>#{bundle['geral.button.novo']}</span>
+						</p:commandLink>
+					</h:panelGroup>
+				</div>
+			</fieldset>
+			
+			<!-- PAINEL DE AUSENCIA EMPREGADO - DATATABLE  -->
+			<p:outputPanel id="pnlAusenciaEmpregado" rendered="#{consultarAusenciaEmpregadoController.pesquisaAtiva}">
+				<p:dataTable 
+					id="ausenciaEmpregadoDataTable"
+					value="#{consultarAusenciaEmpregadoController.listaAusenciaEmpregados}"
+					var="ausencia" 
+					widgetVar="dtAusencia" 
+					rows="10" 
+					filteredValue="#{consultarAusenciaEmpregadoController.listFiltroAusenciaEmpregados}"
+					emptyMessage="#{bundle['geral.crud.noItemFound']}"
+					paginator="true" 
+					rowStyleClass="#{empty rowIx or rowIx mod 2 ne 0 ? 'even-row' : 'odd-row'}"
+					rowIndexVar="rowIx" 
+					sortBy="empregado.nome"
+					sortFunction="#{consultarAusenciaEmpregadoController.sortTextIgnoreCase}"
+					styleClass="estilo-border-dotted" 
+					paginatorPosition="bottom" 
+					tableStyleClass="tablefixa"
+					currentPageReportTemplate="#{bundle['geral.crud.exibindo']} {startRecord} #{bundle['geral.label.ate']} {endRecord} #{bundle['geral.label.de']} {totalRecords}"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" >
+
+
+					<f:facet name="header">
+						<p:outputPanel style="text-align:right; margin-right:-10px"
+							styleClass="ui-widget-auxiliar">
+							<h:outputText
+								value="#{bundle['geral.label.pesquisar.doisPontos']}"
+								escape="false" />
+							<h:inputText id="globalFilter"
+								value="#{consultarAusenciaEmpregadoController.filtro}"
+								onkeyup="dtAusencia.filter();" style="width:150px;"
+								maxlength="255" styleClass="semClear" />
+						</p:outputPanel>
+					</f:facet>
+
+
+					<!-- MATRÍCULA -->
+					<p:column
+						headerText="#{bundle['ausenciaEmpregado.labelgrid.matricula']}"
+						filterBy="empregado.matricula" style="width:10%" sortBy="empregado.matricula"
+						filterStyle="display:none; visibility:hidden;"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{ausencia.empregado.matricula}" />
+					</p:column>
+					
+					<!-- NOME EMPREGADO -->
+					<p:column
+						headerText="#{bundle['ausenciaEmpregado.labelgrid.nomeEmpregado']}"
+						filterBy="empregado.nome" style="width:25%" sortBy="empregado.nome"
+						filterStyle="display:none; visibility:hidden;"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{ausencia.empregado.nome.toUpperCase()}" />
+					</p:column>
+
+					<!-- MOTIVO -->
+					<p:column
+						headerText="#{bundle['ausenciaEmpregado.labelgrid.motivo']}"
+						filterBy="motivo" style="width:25%; text-align:center;" sortBy="motivo.descricao"
+						filterStyle="display:none; visibility:hidden;"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{ausencia.motivo.descricao}" />
+					</p:column>
+					
+					<!-- DATA INICIO -->
+					<p:column
+						headerText="#{bundle['ausenciaEmpregado.labelgrid.dataInicio']}"
+						filterBy="dataInicio" style="width:12%; text-align:center;" sortBy="dataInicio"
+						filterStyle="display:none; visibility:hidden;"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{ausencia.dataInicio}" >
+							<f:convertDateTime pattern="dd/MM/yyyy" />
+						</h:outputText>
+					</p:column>
+					
+					<!-- DATA FIM -->
+					<p:column
+						headerText="#{bundle['ausenciaEmpregado.labelgrid.dataFim']}"
+						filterBy="dataFim" style="width:12%; text-align:center; " sortBy="dataFim"
+						filterStyle="display:none; visibility:hidden;"
+						styleClass="gri-alfanumericos noBackGroundImage">
+						<h:outputText value="#{ausencia.dataFim}" >
+							<f:convertDateTime pattern="dd/MM/yyyy"/>
+						</h:outputText>
+					</p:column>
+					
+					<!--  BOTOES EDITAR e EXCLUIR -->
+					<p:column headerText="#{bundle['ausenciaEmpregado.labelgrid.acoes']}" style="width:9%;" styleClass="noBackGroundImage">
+						<p:commandLink
+							action="#{consultarAusenciaEmpregadoController.editar}"
+							onclick="showStatus();" 
+							oncomplete="hideStatus();"
+							title="#{bundle['ausenciaEmpregado.toltip.label.alterar.hint']}"
+							styleClass="fa fa-edit marginRight iconCaixa"
+							style = "margin-left: 8px !important; color: #0039ba;width: 10px; text-decoration: none;">
+							<f:setPropertyActionListener 
+									target="#{consultarAusenciaEmpregadoController.idAusenciaEmpregado}" 
+									value="#{ausencia.id}" />  
+						</p:commandLink>
+						<p:commandLink id="excluirSR" 
+							styleClass="fa fa-remove marginRight iconCaixa"
+							style="margin-left: 15px; color: #0039ba; width: 10px; text-decoration: none;" 
+							oncomplete="hideStatus();"
+							onclick="dlgExcluir.show(); showStatus();"
+							title="#{bundle['ausenciaEmpregado.toltip.label.excluir.hint']}">				
+							<f:setPropertyActionListener 
+									target="#{consultarAusenciaEmpregadoController.idAusenciaEmpregado}" 
+									value="#{ausencia.id}" />  
+						</p:commandLink>
+					</p:column>
+				</p:dataTable>
+			</p:outputPanel>			
+		</h:form>
+		
+		<!-- CONFIRMAR EXCLUSAO -->
+		<p:dialog header="#{bundle['ausenciaEmpregado.label.tituloPagina.exclusao']}"
+			id="dlgExcluirId" widgetVar="dlgExcluir"
+			styleClass="ui-dialog-background" modal="true" dynamic="true"
+			resizable="false" position="center"
+			>
+			<h:form id="excluirAusenciaForm">
+				<span id="atencaoAusenciaId" class="atencao2" />
+				<h:outputFormat
+					style="font-weight: bold !important;"
+					value="#{bundle['geral.crud.confirmExcluir']}">
+					<f:param value="#{bundle['geral.breadcrumb.ausenciaEmpregado']}" />
+				</h:outputFormat>
+				<br></br>
+				<p:commandLink id="btnExcluir"
+					styleClass="btnLaranja marginTop buttonSelected"
+					action="#{consultarAusenciaEmpregadoController.excluir()}"
+					update=":#{p:component('pnlAusenciaEmpregado')} :#{p:component('messages')} :#{p:component('focusFormConsulta')}"
+					onclick="showStatus();"
+					oncomplete="dlgExcluir.hide(); hideStatus();">
+					<span><h:outputText style="width: 1; height: 1;" title="Sim"
+							value="Sim" /></span>
+				</p:commandLink>
+				<p:commandLink id="btnNaoExcluir"
+					styleClass="btnAzul marginTop buttonSelected"
+					onclick="showStatus();"
+					update=":#{p:component('pnlAusenciaEmpregado')} :#{p:component('focusFormConsulta')}"
+					oncomplete="dlgExcluir.hide(); hideStatus();">
+					<span><h:outputText style="width: 1; height: 1;" title="Não"
+							value="Não" /></span>
+				</p:commandLink>
+				<p:spacer height="30px" />
+			</h:form>
+		</p:dialog>
+	</ui:define>
+</ui:composition>

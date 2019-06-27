@@ -1,0 +1,18 @@
+.celulaEscala{
+	padding: 4px;
+	border-left: 8px solid;
+	background-color: #F5F5F5 !important;
+}
+
+.celulaEscala:hover{
+	background-color: #FFFFFF !important;
+}
+
+.empregadoSelecionado{
+}
+
+.empregadoNaoSelecionado{
+    border: none !important;
+    background-color: #FFF !important;
+    color: #CCC !important;
+}

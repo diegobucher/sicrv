@@ -1,0 +1,73 @@
+.modal{
+	z-index:3;
+	display:none;
+	padding-top:100px;
+	position:fixed;
+	left:0;
+	top:0;
+	width:100%;
+	height:100%;
+	overflow:auto;
+	background-color:rgb(0,0,0);
+	background-color:rgba(0,0,0,0.2);
+	-webkit-animation:opac 0.5s;
+	animation:opac 0.5s
+	}
+.modal-content{
+	margin:auto;
+	background-color:#fff;
+	position:relative;
+	padding:0;
+	outline:0;
+	border-radius:6px;
+	box-shadow:0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)!important;
+	font-size:14px;
+	}
+.modal-width{width:800px;}	
+.modal-content header,
+.modal-content footer{ padding:8px 16px;}	
+	
+.closebtn{
+	text-decoration:none;
+	float:right;
+	font-size:24px;
+	font-weight:bold;
+	color:inherit
+
+
+	}
+.closebtn:hover,
+.closebtn:focus{
+	color:inherit;
+	text-decoration:none;
+	cursor:pointer
+	}
+@-webkit-keyframes opac{from{opacity:0} to{opacity:1}}
+@keyframes opac{from{opacity:0} to{opacity:1}}
+
+.modal-container{padding:16px}
+.modal-container:after{
+	content:"";
+	display:table;
+	clear:both
+	}
+.color-blue{color:#fff!important;background-color:#0039ba!important}
+.color-grey{color:#000!important;background-color:#f1f1f1!important}
+
+.modal header h1{
+	font-family:"Segoe UI",Arial,sans-serif;
+	font-weight:400 !important;;
+	font-size:20px !important;
+	margin:0px!important;
+	color:#FFF !important;
+	text-transform:none !important;
+	}
+	
+.modal header{
+	border-radius:6px 6px 0px 0px;
+	}
+.modal footer{
+		border-radius:0px 0px 6px 6px;
+		border-top:1px solid #ccc;
+	}		
+	

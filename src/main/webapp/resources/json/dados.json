@@ -1,0 +1,114 @@
+{
+  "data": [
+		
+			{
+				"id": "1",
+				"atividade": "MONITORAMENTO",
+				"periodicidade": "REVEZAMENTO",
+				"subatividades": [
+					{
+						"id": "1",
+						"subatividade": "SIACH - ANULAÇÃO ACEITA",
+						"prioridade": "1"
+					},
+					{
+						"id": "2",
+						"subatividade": "SIDPC",
+						"prioridade": "2"
+					},
+					{
+						"id": "3",
+						"subatividade": "SMS RETORNO",
+						"prioridade": "3"
+					},
+					{
+						"id": "4",
+						"subatividade": "S.I.A.",
+						"prioridade": "4"
+					}
+				]
+				
+			},
+			{
+				"id": "2",
+				"atividade": "FIXAS",
+				"periodicidade": "REVEZAMENTO",
+				"subatividades": [
+					{
+						"id": "1",
+						"subatividade": "ATENDER.CAIXA",
+						"prioridade": "1"
+					},
+					{
+						"id": "2",
+						"subatividade": "SERVIÇOS.CAIXA",
+						"prioridade": "2"
+					},
+					{
+						"id": "3",
+						"subatividade": "GERENCIAMENTO DA ESCALA",
+						"prioridade": "3"
+					},
+					{
+						"id": "4",
+						"subatividade": "SIACH - REEMISSÃO",
+						"prioridade": "4"
+					},
+					{
+						"id": "5",
+						"subatividade": "SIACH - INVASÃO",
+						"prioridade": "5"
+					},
+					{
+						"id": "6",
+						"subatividade": "MONITORAMENTO URA",
+						"prioridade": "6"
+					},
+					{
+						"id": "7",
+						"subatividade": "SIACH - ANÁLISE",
+						"prioridade": "7"
+					},
+					{
+						"id": "8",
+						"subatividade": "SIACH - LISTA RESTRITIVA",
+						"prioridade": "8"
+					}
+				]
+				
+			},
+			{
+				"id": "3",
+				"atividade": "INVESTIGAÇÃO",
+				"periodicidade": "SEGUNDA À SEXTA",
+				"subatividades": [
+					{
+						"id": "1",
+						"subatividade": "OFÍCIOS",
+						"prioridade": "-"
+					},
+					{
+						"id": "2",
+						"subatividade": "NOTÍCIA CRIME",
+						"prioridade": "-"
+					},
+					{
+						"id": "3",
+						"subatividade": "EMPRESAS PARCEIRAS",
+						"prioridade": "-"
+					},
+					{
+						"id": "4",
+						"subatividade": "CP CESEG20",
+						"prioridade": "-"
+					},
+					{
+						"id": "5",
+						"subatividade": "*OUTRAS NÃO DEFINIDAS",
+						"prioridade": "-"
+					}
+				]
+				
+			}
+		]
+}

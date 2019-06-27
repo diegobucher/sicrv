@@ -1,0 +1,126 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:caixa="http://java.sun.com/jsf/composite/caixa">	
+	
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li>
+						<a href="#"><h:outputText value="#{bundle['geral.breadcrumb.consulta']}" /> </a>
+					</li>
+					<li>Minha Escala</li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+
+
+	<ui:define name="html-head">
+		<h:outputStylesheet library="css" name="minhaEscala.css" />
+		
+	</ui:define>
+
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+	
+
+	<ui:define name="content-main-page">
+	
+	    <h1>Minha Escala</h1>
+		<h:form id="calendarioEscalaForm">
+			<p:messages id="messages" showDetail="false" />
+		
+			<fieldset class="filtro">
+			
+				<caixa:cInputData title="Data Início" value="#{minhaEscalaController.dataInicio}"  required="true" />
+				<caixa:cInputData title="Data Fim" value="#{minhaEscalaController.dataFim}"  required="true" />
+				
+				<p:commandLink action="#{minhaEscalaController.buscarEscala()}" update="@form"
+						styleClass="btnAzul marginTop marginTop20">
+					<span>Consultar</span>
+				</p:commandLink>
+					
+			</fieldset>
+			
+			<div class="colLeft">
+			
+	            <table class="escala">
+	            	<thead>
+	            		<th class="textRight">
+							Saldo de folgas hoje:<span  class="textColorGreyBlack">#{minhaEscalaController.saldoFolgaHoje}</span>
+						</th>
+	            	</thead>
+				</table>				
+				<ui:repeat var="mesDTO" value="#{minhaEscalaController.mesDTOList}">
+		            <table class="escala">
+						<thead>
+							<tr>
+								<td colspan="4" class="selectMeses">
+									#{mesDTO.nomeMes} #{mesDTO.anoInt}
+								</td>
+							</tr>
+		                	<tr>
+		                        <th>Segunda</th>
+		                        <th>Terça</th>
+		                        <th>Quarta</th>
+		                        <th>Quinta</th>
+		                        <th>Sexta</th>
+		                        <th>Sábado</th>
+		                        <th>Domingo</th>
+		                    </tr>
+		                </thead>
+		                <tbody>
+		                	<ui:repeat var="semanaDTO" value="#{mesDTO.semanaDTOList}">
+		                		<tr>
+		         			   		<ui:repeat var="diaDTO" value="#{semanaDTO.diaDTOList}">
+		                				<td class="#{diaDTO.classeCss}">
+	                				 		<div class="dia">
+	                				 			#{diaDTO.numeroDia}
+	                				 		</div>
+		                				 	<ui:fragment rendered="#{not empty diaDTO.horario}">
+		                				 		<div class="horario">
+		                				 			#{diaDTO.horario}
+		                				 		</div>
+		                				 	</ui:fragment>
+		                				 	<ui:fragment rendered="#{not empty diaDTO.ausencia}">
+		                				 		<div class="horario">
+		                				 			#{diaDTO.ausencia}
+		                				 		</div>
+		                				 	</ui:fragment>
+		                				</td>
+		                		    </ui:repeat>
+		                		</tr>
+							</ui:repeat>
+		                </tbody>
+		            </table>
+				</ui:repeat>
+				
+			</div><!--Fim colLeft-->
+		
+ 		
+	        <div class="colRight">
+				<ul class="legenda">
+					<h3>Legenda</h3>
+					<li><div class="iconLegenda aniversario"></div>Aniversário</li>
+					<li><div class="iconLegenda atestado"></div>Atestado</li>
+					<li><div class="iconLegenda juriPolular"></div>Convocação juri popular</li>
+					<li><div class="iconLegenda destacamento" ></div>Destacamento</li>
+					<li><div class="iconLegenda ferias"></div>Férias</li>
+<!-- 					<li><div class="iconLegenda folgaFinalSemana"></div>Folga</li> -->
+					<li><div class="iconLegenda licencaOutrosMotivos"></div>Licença outros motivos</li>
+					<li><div class="iconLegenda licencaPremio"></div>Licença prêmio</li>
+					<li><div class="iconLegenda repousoRemunerado"></div>Repouso remunerado</li>
+					<li><div class=" iconLegenda substituicao"></div>Substituição</li>
+	            </ul>
+ 	        </div><!--Fim colRight-->
+ 	        
+		</h:form>     
+		
+	</ui:define>
+</ui:composition>

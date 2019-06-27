@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:cc="http://java.sun.com/jsf/composite"	
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<!-- INTERFACE -->
+<cc:interface>
+	<!-- DEFAULT PARAMS -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+	<ul class="menu">
+		<li><a href="#">Consulta <i class="fa fa-caret-down"></i></a>
+			<ul class="submenu-1">
+				<c:if test="#{controleAcesso.tipoUsuario.valor == 3}">
+					<li><a href="#{request.contextPath}/pages/bancoFolgas/minhasFolgas.xhtml">Meu Banco de Folgas</a></li>
+					<li><a href="#{request.contextPath}/pages/escalaTrabalho/minhaEscala.xhtml">Minha Escala</a></li>
+				</c:if>
+				
+					<li><a href="#{request.contextPath}/pages/relatorio/relatorioEscala.xhtml">Escala</a></li>
+			</ul>
+		</li>
+		
+		<c:if test="#{controleAcesso.tipoUsuario.valor == 2}">
+			<li><a href="#">Gerenciamento <i class="fa fa-caret-down"></i></a>
+				<ul class="submenu-1">
+					<li><a href="#{request.contextPath}/pages/atividade/consulta.xhtml">Atividade</a></li>
+					<li><a href="#{request.contextPath}/pages/equipe/consulta.xhtml">Equipe</a></li>
+					<li><a href="#{request.contextPath}/pages/ausenciaEmpregado/consulta.xhtml">Ausência Empregado</a></li>
+					<c:if test="#{controleAcesso.tipoUsuario.valor == 2}">
+						<li><a href="#{request.contextPath}/pages/escalaTrabalho/gerarEscala.xhtml">Escala de Trabalho</a></li>
+					</c:if>
+					<li><a href="#{request.contextPath}/pages/estacaoTrabalho/consulta.xhtml">Estação de Trabalho</a></li>
+					<li><a href="#{request.contextPath}/pages/bancoFolgas/equipeFolgas.xhtml">Folga</a></li>
+				</ul>
+			</li>
+	 		<li><a href="#">Parâmetro <i class="fa fa-caret-down"></i></a>
+				<ul class="submenu-1">
+					<li><a href="#{request.contextPath}/pages/curvaPadrao/consulta.xhtml">Curva Padrão</a></li>
+				</ul>
+			</li>
+	 		<li><a href="#">Relatório <i class="fa fa-caret-down"></i></a>
+				<ul class="submenu-1">
+					<li><a href="#{request.contextPath}/pages/relatorio/ausenciaFolgas.xhtml">Ausência e Folga</a></li>
+					<li><a href="#{request.contextPath}/pages/relatorio/bancoFolgas.xhtml">Banco de Folga</a></li>
+					<li><a href="#{request.contextPath}/pages/relatorio/taxaOcupacao.xhtml">Taxa de Ocupação</a></li>
+				</ul>
+			</li>
+		</c:if>
+		<li><a onclick="ajuda('#{request.contextPath}/resources/manual/manual.pdf')" href="#">Manual do Usuário</a></li>
+		
+	</ul>
+</cc:implementation>
+</html>

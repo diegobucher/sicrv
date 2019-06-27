@@ -1,0 +1,377 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:caixa="http://java.sun.com/jsf/composite/caixa">	
+	
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li>
+						<a href="#"><h:outputText value="#{bundle['geral.breadcrumb.gerenciamento']}" /> </a>
+					</li>
+					<li>
+						<p:commandLink action="#{manterEquipeController.redirectTelaConsulta}">
+								<span>#{bundle['geral.breadcrumb.equipe']}</span>
+						</p:commandLink>						
+					</li>
+					<li><h:outputText value="#{manterEquipeController.breadcrumb}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+	
+	<ui:define name="html-head">
+		<h:outputStylesheet library="css" name="wizard.css" />
+	</ui:define>
+	
+	<ui:define name="content-main-page">	
+		<h1 class="titlePage"><h:outputText value="#{bundle['geral.breadcrumb.equipe.cadastradas']}" /></h1>
+		<ul class="campoObrigatorio">
+            <li class="obrigatorio">Obrigatório</li>
+        </ul>                
+		<h:form id="formPadrao">
+		
+			<!-- MENSAGENS -->
+			<p:messages id="messages" autoUpdate="true" showDetail="false"/>
+			
+			<p:wizard step="#{manterEquipeController.abaAtiva}" flowListener="#{manterEquipeController.onFlowProcess}" widgetVar="myWizard" showNavBar="false" >
+				<p:tab id="equipe" title=" Equipe" titleStyleClass="fa fa-group">
+					<fieldset class="filtro">
+						<caixa:cInputText title="Nome da Equipe" value="#{manterEquipeController.instance.nome}" required="true" width="390" readonly="#{manterEquipeController.detalhar}"  />
+						<!-- Tipo Jornada  -->
+						<h:outputLabel value="#{bundle['equipe.label.tipoJornada']}" styleClass="label-button" style="width: 145px">
+							<h:outputText styleClass="pesquisaDireta" />
+							<br />
+							<h:selectOneMenu id="tipoJornada" value="#{manterEquipeController.instance.periodicidade}" style="width: 140px" disabled="#{manterEquipeController.detalhar}">
+								<f:selectItem itemLabel="Selecione" noSelectionOption="true" />
+								<f:selectItems value="#{enumController.periodicidadeList}" var="item" itemValue="#{item}" itemLabel="#{item.descricao}" />
+							</h:selectOneMenu>
+						</h:outputLabel>
+						<caixa:cInputText title="CGC - Unidade" value="#{manterEquipeController.instance.unidade.codigoNome}" required="true" disabled="true" width="315" />
+						<div class="clear"></div>
+						<p:commandButton styleClass="ui-wizard-nav-next marginTop buttonSelected" value="Próximo" iconPos="left" type="button" onclick="myWizard.next();" />
+						<p:commandLink title="#{bundle['geral.button.cancelar']}" style="float: left;" styleClass="btnLaranja marginTop buttonSelected"
+							action="#{manterEquipeController.redirectTelaConsulta}">
+							<span>#{bundle['geral.button.cancelar']}</span>
+						</p:commandLink>
+					</fieldset>
+				</p:tab>
+				<p:tab id="atividade" title=" Atividade" titleStyleClass="fa fa-gear">
+					<p:dataTable id="dataTableCrud"  
+						value="#{manterEquipeController.listAtividade}" 
+						var="atividade" widgetVar="atividadeDataTable"
+						rows="5" 
+						paginator="true" lazy="false" 
+						emptyMessage="#{bundle['geral.crud.noItemFound']}"
+						rowStyleClass="grey-row"
+						rowIndexVar="rowIx"
+						selection="#{manterEquipeController.listAtividadeSelecionadas}" rowKey="#{atividade.id}"
+						styleClass="estilo-border-dotted ui-datatable-accordion"  paginatorPosition="bottom" 
+						currentPageReportTemplate="#{bundle['geral.label.exibindo']} {startRecord} #{bundle['geral.label.ate']} {endRecord} #{bundle['geral.label.de']} {totalRecords}"
+						paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink}" >
+						
+						<p:column disabledSelection="#{manterEquipeController.detalhar}" selectionMode="multiple" style="width:16px;text-align:center"/>
+						<p:column headerText="#{bundle['atividade.label.atividade'].toUpperCase()}" style="width:40%; border-left:1px dotted #666 !important;" styleClass="gri-alfanumericos noBackGroundImage">
+				            <p:rowToggler rendered="#{atividade.atividadeList != null and atividade.atividadeList.size() gt 0}"/>
+							<h:outputText value="#{atividade.nome}" styleClass="alinhamentoTextoCelula" style="margin-left:5px !important;"/>
+						</p:column>
+						<p:column headerText="#{bundle['atividade.label.periodicidade'].toUpperCase()}"
+							style="width:40%; border-left:1px dotted #666 !important;" 
+							styleClass="gri-alfanumericos noBackGroundImage" >
+							<h:outputText value="#{atividade.periodicidade.descricao}" style="margin-left:5px !important;"/>
+						</p:column>
+						<p:column headerText="#{bundle['geral.label.acoes'].toUpperCase()}"  styleClass="noBackGroundImage textCenter" style="width:15%; border-left:1px dotted #666 !important;">
+							<p:commandLink	action="#{manterEquipeController.detalharAtividade(atividade)}"
+								title="#{bundle['geral.button.detalhar']}"
+								styleClass="fa fa-info-circle marginRight iconCaixa"
+								style = "margin-left: 8px !important; color: #0039ba;width: 10px; text-decoration: none;">
+							</p:commandLink>
+						</p:column>
+						
+						<p:rowExpansion>
+						 	<p:dataTable id="dataTableCrud" style="margin: 0px !important;" 
+								value="#{atividade.atividadeList}" 
+								var="subAtividade" widgetVar="atividadeFilhoDataTable"
+								rowIndexVar="rowIx"
+								styleClass="estilo-border-dotted">
+								
+								<p:column headerText="#{bundle['atividade.label.subativade'].toUpperCase()}"
+									style="width:45%;" styleClass="gri-alfanumericos noBackGroundImage" >
+									<h:outputText value="#{subAtividade.nome}" style="margin-left:5px !important;"/>
+									
+								</p:column>
+								<p:column headerText="#{bundle['atividade.label.prioridade'].toUpperCase()}"
+									style="width:40%; border-left:1px dotted #666 !important;" 
+									styleClass="gri-alfanumericos noBackGroundImage" >
+									<h:outputText value="#{subAtividade.prioridade}" style="margin-left:5px !important;"/>
+								</p:column>
+								<p:column headerText="AÇÕES"  styleClass="noBackGroundImage textCenter" style="width:15%;  border-left:1px dotted #666 !important;" >						
+									<p:commandLink	action="#{manterEquipeController.detalharAtividade(subAtividade)}"
+										title="#{bundle['geral.button.detalhar']}"
+										styleClass="fa fa-info-circle marginRight iconCaixa"
+										style = "margin-left: 8px !important; color: #0039ba;width: 10px; text-decoration: none;">
+									</p:commandLink>
+								</p:column>
+							</p:dataTable>
+				        </p:rowExpansion>
+					</p:dataTable>
+					<p:commandButton styleClass="ui-wizard-nav-back marginTop buttonSelected" value="Voltar" iconPos="right" type="button" onclick="myWizard.back();" />
+						<p:commandButton styleClass="ui-wizard-nav-next marginTop buttonSelected" value="Próximo" iconPos="left" type="button" onclick="myWizard.next();" />
+					<p:commandLink title="#{bundle['geral.button.cancelar']}" styleClass="btnLaranja marginTop buttonSelected"
+						action="#{manterEquipeController.redirectTelaConsulta}">
+						<span>#{bundle['geral.button.cancelar']}</span>
+					</p:commandLink>
+					<div class="clear"></div>
+				</p:tab>
+				<p:tab id="empregado" title=" Empregado" titleStyleClass="fa fa-child">
+					<fieldset class="filtro">
+						
+						<!-- Para funcionar deve possuir o id da matricula com este nome 'matricula' - Para renderizar o campo -->
+						<caixa:cInputMatricula id="matricula" title="#{bundle['equipe.label.matricula']}" controller="#{manterEquipeController}" 
+						value="#{manterEquipeController.equipeEmpregado.empregado.matricula}" disabled="#{manterEquipeController.detalhar}"
+						render=":formPadrao:nomeEmpregado:item :formPadrao:funcaoEmpregado:item :formPadrao:messages" lupaLdap="true" /> 
+										
+						<!-- Nome Empregado -->
+						<caixa:cInputText id="nomeEmpregado" title="Nome do Empregado" value="#{manterEquipeController.equipeEmpregado.empregado.nome.toUpperCase()}" disabled="true" />
+
+						<!-- Função Empregado -->
+						<caixa:cInputText width="350" id="funcaoEmpregado" title="#{bundle['equipe.label.funcao']}" value="#{manterEquipeController.equipeEmpregado.empregado.funcao}" disabled="true" />
+						
+						<div class="clear"></div>
+						<!-- Supervisor -->
+						<h:outputLabel value="#{bundle['equipe.label.supervisor']}" styleClass="label-button" style="width: 80px">
+							<br />
+							<h:selectOneMenu id="supervisor" value="#{manterEquipeController.equipeEmpregado.supervisor}" style="width: 80px" disabled="#{manterEquipeController.detalhar or manterEquipeController.equipeEmpregado.id != null}" >
+								<f:selectItem  itemValue="false" itemLabel="Não" />
+								<f:selectItem  itemValue="true" itemLabel="Sim" />
+							</h:selectOneMenu>
+						</h:outputLabel>
+			             
+						<h:outputLabel value="#{bundle['equipe.label.horaInicio']}" 
+									styleClass="label-button"	
+									for="idHoraInicio" 
+									style="width: 80px">
+							<h:outputText styleClass="pesquisaDireta" />
+							<br />
+							
+							<h:selectOneMenu id="idHoraInicio" value="#{manterEquipeController.equipeEmpregado.horarioInicioEnum}" 
+											disabled="#{manterEquipeController.detalhar}"
+											style="width: 80px" converter="omnifaces.SelectItemsConverter"	>
+								<f:selectItems value="#{manterEquipeController.listaHoras}" var="item" 
+												itemValue="#{item}" itemLabel="#{item.descricao}" />
+							</h:selectOneMenu>
+						</h:outputLabel>
+						
+					
+						<h:outputLabel value="#{bundle['equipe.label.horaFim']}" 
+							styleClass="label-button"	
+							for="idHoraFim" 
+							style="width: 80px">
+							
+							<h:outputText styleClass="pesquisaDireta" />
+							<br />
+							<h:selectOneMenu id="idHoraFim" value="#{manterEquipeController.equipeEmpregado.horarioFimEnum}" 
+											disabled="#{manterEquipeController.detalhar}"
+											style="width: 80px" converter="omnifaces.SelectItemsConverter"	>
+								<f:selectItems value="#{manterEquipeController.listaHoras}" var="item" 
+												itemValue="#{item}" itemLabel="#{item.descricao}" />
+							</h:selectOneMenu>
+						</h:outputLabel>
+		             
+			             <div class="clear"></div>
+			             <p:commandLink title="#{bundle['geral.button.adicionar']}" styleClass="btnAzul marginTop buttonSelected" 
+										update="@form messages" actionListener="#{manterEquipeController.adicionarEquipeEmpregado}" rendered="#{not manterEquipeController.detalhar}">
+							<span>#{bundle['geral.button.adicionar']}</span>
+						</p:commandLink>
+					</fieldset>
+					
+					<p:outputPanel id="pnlGrid" rendered="#{manterEquipeController.listEquipeEmpregado.size() != 0}">
+						<caixa:cDataTable title="Empregado" lista="#{manterEquipeController.listEquipeEmpregado}" controller="#{manterEquipeController}" exibeEditar="false" exibeExcluir="false" exibeDetalhar="false">
+							<p:column
+								headerText="MATRÍCULA"
+								filterBy="empregado.matricula" style="width:10%" sortBy="empregado.matricula"
+								sortFunction="#{consultarEquipeController.sortTextIgnoreCase}"
+								filterStyle="display:none; visibility:hidden;"
+								styleClass="gri-codigos noBackGroundImage">
+								<h:outputText value="#{item.empregado.matricula.toUpperCase()}" styleClass="gri-alfanumericos noBackGroundImage" style="float:left" />
+							</p:column>
+							<p:column
+								headerText="EMPREGADO"
+								filterBy="empregado.nome" style="width:25%" sortBy="empregado.nome"
+								sortFunction="#{consultarEquipeController.sortTextIgnoreCase}"
+								filterStyle="display:none; visibility:hidden;"
+								styleClass="gri-codigos noBackGroundImage">
+								<h:outputText value="#{item.empregado.nome.toUpperCase()}" styleClass="gri-alfanumericos noBackGroundImage" style="float:left" />
+							</p:column>
+							<p:column
+								headerText="SUPERVISOR"
+								filterBy="supervisor.toString()" style="width:10%" sortBy="supervisor.toString()"
+								sortFunction="#{consultarEquipeController.sortTextIgnoreCase}"
+								filterStyle="display:none; visibility:hidden;"
+								styleClass="gri-codigos noBackGroundImage">
+								<h:outputText value="#{item.supervisor eq true ? 'Sim' : 'Não'}" />
+							</p:column>
+							<p:column
+								headerText="HORA INÍCIO"
+								filterBy="horarioInicio" style="width:12%" sortBy="horarioInicio"
+								sortFunction="#{consultarEquipeController.sortTextIgnoreCase}"
+								filterStyle="display:none; visibility:hidden;"
+								styleClass="gri-codigos noBackGroundImage">
+								<h:outputText value="#{item.horarioInicio}" />
+							</p:column>
+							<p:column
+								headerText="HORA FIM"
+								filterBy="horarioFim" style="width:10%" sortBy="horarioFim"
+								sortFunction="#{consultarEquipeController.sortTextIgnoreCase}"
+								filterStyle="display:none; visibility:hidden;"
+								styleClass="gri-codigos noBackGroundImage">
+								<h:outputText value="#{item.horarioFim}" />
+							</p:column>
+							
+							<p:column headerText="#{bundle['geral.label.acoes'].toUpperCase()}"
+								style="width:10%;" styleClass="gri-codigos noBackGroundImage">
+								
+								<p:commandLink rendered="#{not manterEquipeController.detalhar}"
+									action="#{manterEquipeController.validarEditar(item)}"
+									update=":#{p:component('messages')} :#{p:component('formPadrao')}"
+									title="#{bundle['geral.button.editar']}"
+									styleClass="fa fa-edit marginRight iconCaixa"
+									style = "color: #0039ba; width: 10px; text-decoration: none;">
+								</p:commandLink>
+								<p:commandLink id="excluirBtn" rendered="#{not manterEquipeController.detalhar}"
+									action="#{manterEquipeController.validarExcluir(item)}"
+									styleClass="fa fa-remove marginRight iconCaixa"
+									update=":#{p:component('excluirForm')}"
+									style="margin-left: 5px; color: #0039ba; width: 10px; text-decoration: none;" 
+									oncomplete="exclusaoVar.show();"
+									title="#{bundle['geral.button.excluir']}">
+								</p:commandLink>
+								
+							</p:column>
+						</caixa:cDataTable>
+					</p:outputPanel>
+					
+					<p:commandButton styleClass="ui-wizard-nav-back marginTop buttonSelected" value="Voltar" iconPos="right" type="button" onclick="myWizard.back();" />
+				  	<p:commandLink title="#{bundle['geral.button.salvar']}" rendered="#{not manterEquipeController.detalhar}"
+							styleClass="btnAzul marginTop buttonSelected" action="#{manterEquipeController.preValidarSalvar}"
+							update="@form messages">
+							<span>#{bundle['geral.button.salvar']}</span>
+					</p:commandLink>
+					<p:commandLink title="#{bundle['geral.button.cancelar']}" styleClass="btnLaranja marginTop buttonSelected"
+						action="#{manterEquipeController.redirectTelaConsulta}">
+						<span>#{bundle['geral.button.cancelar']}</span>
+					</p:commandLink>
+					<div class="clear"></div>
+				</p:tab>
+			</p:wizard>
+		</h:form>
+		
+		<!-- CONFIRMAR EXCLUSAO -->
+		<p:dialog  header="Exclusão Empregado"
+			id="exclusaoId" widgetVar="exclusaoVar"
+			styleClass="ui-dialog-background" modal="true" dynamic="true"
+			resizable="false" position="center"	onShow="giveFocus('excluirForm:btnExcluir')">
+			<h:form id="excluirForm">
+				<span id="atencaoId" class="atencao2" />
+				
+				<h:outputFormat	style="font-weight: bold !important;" escape="false"
+					value="#{manterEquipeController.msgConfirmExclusaoEmpregado}">
+				</h:outputFormat>
+				<br></br>
+
+				<p:commandLink id="btnExcluir"
+					styleClass="btnLaranja marginTop buttonSelected"  
+					action="#{manterEquipeController.excluir()}"
+					update=":#{p:component('messages')} :#{p:component('formPadrao')}"
+					onclick="showStatus();"
+					oncomplete="dtItem.filter(); exclusaoVar.hide(); hideStatus();">
+					
+					<span><h:outputText style="width: 1; height: 1;" title="Sim" value="Sim" /></span>
+				</p:commandLink>
+				<p:commandLink id="btnNaoExcluir"
+					styleClass="btnAzul marginTop buttonSelected"
+					onclick="showStatus();"
+					oncomplete="exclusaoVar.hide(); hideStatus();">
+					<span><h:outputText style="width: 1; height: 1;" title="Não" value="Não" /></span>
+				</p:commandLink>
+				<p:spacer height="30px" />
+			</h:form>
+		</p:dialog>
+		
+		<!-- CONFIRMAR EDICAO -->
+		<p:dialog  header="Edição Empregado"
+			id="edicaoId" widgetVar="edicaoVar"
+			styleClass="ui-dialog-background" modal="true" dynamic="true"
+			resizable="false" position="center">
+			<h:form id="edicaoForm">
+				<span id="atencaoId" class="atencao2" />
+				
+				<h:outputFormat	style="font-weight: bold !important;" escape="false"
+					value="#{bundle['equipe.message.update.empregado.empregadoEscaladoNoFuturo']}">
+				</h:outputFormat>
+				<br></br>
+
+<!-- 					update=":#{p:component('messages')} :#{p:component('formPadrao')}" -->
+
+				<p:commandLink id="btnEditar"
+					styleClass="btnLaranja marginTop buttonSelected"  
+					action="#{manterEquipeController.editar(manterEquipeController.equipeEmpregadoValidaEdicao)}"
+					update=":formPadrao"
+					onclick="showStatus();"
+					oncomplete="edicaoVar.hide(); hideStatus();">
+					<span><h:outputText style="width: 1; height: 1;" title="Sim" value="Sim" /></span>
+				</p:commandLink>
+				
+				<p:commandLink id="btnNaoEditar"
+					styleClass="btnAzul marginTop buttonSelected"
+					oncomplete="edicaoVar.hide();">
+					<span><h:outputText style="width: 1; height: 1;" title="Não" value="Não" /></span>
+				</p:commandLink>
+				<p:spacer height="30px" />
+			</h:form>
+		</p:dialog>
+		
+		<!-- GERAR ESCALA -->
+		<p:dialog  header="Geração de Escalas"
+			id="gerarEscalaId" widgetVar="gerarEscalaVar"
+			styleClass="ui-dialog-background" modal="true" dynamic="true"
+			resizable="false" position="center">
+			<h:form id="escalaForm">
+				<span id="atencaoId" class="atencao2" />
+				
+				<h:outputFormat	style="font-weight: bold !important;" escape="false"
+					value="#{bundle['equipe.message.update.empregado.gerarEscalasNovosEmpregados']}">
+				</h:outputFormat>
+				<br></br>
+
+<!-- 					update=":#{p:component('messages')} :#{p:component('formPadrao')}" -->
+				<p:commandLink id="btnEditar"
+					styleClass="btnLaranja marginTop buttonSelected"  
+					action="#{manterEquipeController.salvar()}"
+					update=":formPadrao"
+					onclick="showStatus();"
+					oncomplete="gerarEscalaVar.hide(); hideStatus();">
+					<span><h:outputText style="width: 1; height: 1;" title="Sim" value="Sim" /></span>
+					<f:setPropertyActionListener target="#{manterEquipeController.flagGerarEscalaNovosEmpregados}" value="true"/>
+				</p:commandLink>
+				
+				<p:commandLink id="btnNaoEditar"
+					action="#{manterEquipeController.salvar()}"
+					styleClass="btnAzul marginTop buttonSelected"
+					update=":#{p:component('messages')} :#{p:component('formPadrao')}"
+					onclick="showStatus();"
+					oncomplete="gerarEscalaVar.hide(); hideStatus();">
+					<span><h:outputText style="width: 1; height: 1;" title="Não" value="Não" /></span>
+					<f:setPropertyActionListener target="#{manterEquipeController.flagGerarEscalaNovosEmpregados}" value="false"/>
+				</p:commandLink>
+				<p:spacer height="30px" />
+			</h:form>
+		</p:dialog>
+				
+	</ui:define>	
+</ui:composition>

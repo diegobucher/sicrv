@@ -1,0 +1,180 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:caixa="http://java.sun.com/jsf/composite/caixa">	
+	
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li>
+						<a href="#"><h:outputText value="#{bundle['geral.breadcrumb.relatorio']}" /> </a>
+					</li>
+					<li>Escala</li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+
+	<ui:define name="html-head">
+		<h:outputStylesheet library="css" name="minhaEscala.css" />
+		<h:outputStylesheet library="css" name="calendario.css" />
+		<h:outputStylesheet library="css" name="dataTables.css" />
+		
+		<h:outputScript library="js" name="jquery.dataTables.min.js" />
+		<h:outputScript library="js" name="relatorioEscala.js" />
+	</ui:define>
+
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+
+	<ui:define name="content-main-page">
+	
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{relatorioEscalaController.prepareToResult()}" />
+		</f:metadata>
+	
+	    <h1>Escala</h1>
+		<h:form id="calendarioEscalaForm">
+			<p:messages id="messages" showDetail="false" />
+			
+			<ui:fragment rendered="#{not empty relatorioEscalaController.listEquipe}">
+				<fieldset class="filtro">
+				
+					<caixa:cCombo title="Equipe" lista="#{relatorioEscalaController.listEquipe}" value="#{relatorioEscalaController.equipe.id}" var="equipe" itemLabel="#{equipe.nome}" itemValue="#{equipe.id}"
+						disabled="true" />
+					<caixa:cInputData title="Data Início" value="#{relatorioEscalaController.dataInicio}"  required="true" />
+					<caixa:cInputData title="Data Fim" value="#{relatorioEscalaController.dataFim}"  required="true" />
+					
+					<p:commandLink action="#{relatorioEscalaController.buscarEscalas()}" update="@form" oncomplete="acoesPosPesquisar();"
+							styleClass="btnAzul marginTop marginTop20">
+						<span>Consultar</span>
+					</p:commandLink>
+					<p:commandLink onclick="PrimeFaces.monitorDownload(showStatus, hideStatus);" 
+									rendered="#{relatorioEscalaController.exibirGerarRelatorio}"
+									update="messages" ajax="false" 
+									styleClass="btnLaranja marginTop marginTop20">
+						<span>Gerar PDF</span>
+						<p:fileDownload value="#{relatorioEscalaController.downloadPdf()}" />
+					</p:commandLink>
+				</fieldset>
+				
+				<div class="colLeft">
+					<ui:repeat var="mesDTO" value="#{relatorioEscalaController.mesDTOList}">
+			            <table id="relatorioEscala" class="escala">
+							<thead>
+								<tr>
+									<td colspan="4" class="selectMeses">
+										#{mesDTO.nomeMes} #{mesDTO.anoInt}
+									</td>
+								</tr>
+			                	<tr>
+			                        <th>Segunda</th>
+			                        <th>Terça</th>
+			                        <th>Quarta</th>
+			                        <th>Quinta</th>
+			                        <th>Sexta</th>
+			                        <th>Sábado</th>
+			                        <th>Domingo</th>
+			                    </tr>
+			                </thead>
+			                <tbody>
+			                	<ui:repeat var="semanaDTO" value="#{mesDTO.semanaDTOList}">
+			                		<tr>
+			         			   		<ui:repeat var="diaDTO" value="#{semanaDTO.diaDTOList}">
+			                				<td class="#{diaDTO.classeCss}">
+		                				 		<div class="dia">
+		                				 			#{diaDTO.numeroDia}
+		                				 		</div>
+			                				 	<ui:fragment rendered="#{not empty diaDTO.saldoFolga}">
+			                				 		<div class="tipoFolga">
+			                				 			Saldo: #{diaDTO.saldoFolga}
+			                				 		</div>
+			                				 	</ui:fragment>
+			                				 	<div class="data" style="display:none">
+			                				 		<h:outputText value="#{diaDTO.data}">
+			                				 			<f:convertDateTime pattern="dd/MM/yyyy"/>
+			                				 		</h:outputText>
+			                				 	</div>
+			                				</td>
+			                		    </ui:repeat>
+			                		</tr>
+								</ui:repeat>
+			                </tbody>
+			            </table>
+					</ui:repeat>
+				</div><!--Fim colLeft-->
+			</ui:fragment>
+		
+ 			<p:remoteCommand action="#{relatorioEscalaController.detalharDia()}" name="detalharDia" oncomplete="carregarDataTables()"
+ 				update=":formModal">
+ 			</p:remoteCommand>
+		</h:form>     
+
+		<ui:fragment rendered="#{not empty relatorioEscalaController.listEquipe}">
+	        <div class="colRight">
+				<ul class="legenda">
+					<h3>Legenda</h3>
+					<li><div class="iconLegenda colorEscala"></div>Escala</li>
+	            </ul>
+	        </div><!--Fim colRight-->
+			
+			<!--MEU MODAL-->
+		    <div id="id_modal" class="modal">
+		        <div class="modal-content modal-width">
+					<h:form id="formModal" prependId="false">
+			            <header class=" color-blue">
+			                <span class="closebtn btn_fecha_modal" onclick="hideModal()"><h:outputText value="&amp;times;" escape="false"/></span>
+			                <h1 class="">Data:
+			                	<h:outputText value="#{relatorioEscalaController.diaDetalhe}" >
+			                		<f:convertDateTime pattern="dd/MM/yyyy"/>
+			                	</h:outputText>
+			                </h1>
+			            </header>
+			            <div class="modal-container">
+			            
+	            			<p:messages id="messagesModal" showDetail="false" />
+							
+			                <h3>Empregados Escalados (#{relatorioEscalaController.empregadosEscaladosList.size()})</h3>
+							
+							<h:dataTable  id="table_empregados_escalados" styleClass="stripe compact" cellpadding="0" width="100%"
+								rendered="#{not empty relatorioEscalaController.empregadosEscaladosList}"
+								value="#{relatorioEscalaController.empregadosEscaladosList}" var="empregado"
+								columnClasses="col80,col15">
+								<h:column>
+				    				<f:facet name="header">Nome</f:facet>
+				    				#{empregado.nome}
+				    			</h:column>
+								<h:column>
+				    				<f:facet name="header">Horário</f:facet>
+				    				#{relatorioEscalaController.empregadoHorarioMapa[empregado]}
+				    			</h:column>
+							</h:dataTable>
+							<ui:fragment rendered="#{empty relatorioEscalaController.empregadosEscaladosList}">
+								<table id="table_empregados_escalados" class="stripe compact" width="100%"  cellpadding="0">
+				                   <thead>
+										<tr>
+											<th width="80%" class="dt-head-left">Nome</th>
+											<th width="15%" class="dt-head-center">Horário</th>
+										</tr>
+				                    </thead>
+			                    </table>
+							</ui:fragment>
+							
+			            </div>
+			            <footer class="color-grey">
+			                <a href="#" id="" class="btnLaranja floatRight btn_fecha_modal" onclick="hideModal()"><span>Fechar</span></a>
+							<div class="clear"></div>
+			            </footer>
+			            
+					</h:form>
+		        </div>
+		    </div>
+			<!--/MEU MODAL-->
+		</ui:fragment>
+	</ui:define>
+</ui:composition>

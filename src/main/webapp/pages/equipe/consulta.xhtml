@@ -1,0 +1,70 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+    xmlns:caixa="http://java.sun.com/jsf/composite/caixa">	
+	
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li>
+						<a href="#"><h:outputText value="#{bundle['geral.breadcrumb.gerenciamento']}" /> </a>
+					</li>
+					<li><h:outputText value="#{bundle['geral.breadcrumb.equipe.editar']}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+
+	<ui:define name="content-main-page">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{consultarEquipeController.prepareToResult}" />
+		</f:metadata>
+		<h:form id="formPadrao">
+		
+			<p:focus for="formPadrao" id="focusID" />
+			<!-- MENSAGENS -->
+			<p:messages showDetail="false" showSummary="true" escape="true"
+				id="messages" />
+				
+			<h1 class="titlePage">#{bundle['equipe.title.consulta']}</h1>
+			
+			<div id="divBotes">
+				<h:panelGroup>
+					<p:commandLink title="#{bundle['geral.button.novo']}"
+						styleClass="btnAzul marginTop buttonSelected"
+						action="#{consultarEquipeController.novo}">
+						<span>#{bundle['geral.button.novo']}</span>
+					</p:commandLink>
+				</h:panelGroup>
+				<br /><br />			
+			</div>
+			
+			<caixa:cDataTable title="Equipes" controller="#{consultarEquipeController}">
+				<p:column
+					headerText="#{bundle['equipe.label.nomeEquipe']}"
+					filterBy="nome" style="width:38%" sortBy="nome"
+					sortFunction="#{consultarEquipeController.sortTextIgnoreCase}"
+					filterStyle="display:none; visibility:hidden;"
+					styleClass="gri-alfanumericos noBackGroundImage">
+					<h:outputText value="#{item.nome}" />
+				</p:column>
+				<p:column
+					headerText="#{bundle['equipe.label.periodicidade']}"
+					filterBy="periodicidade" style="width:38%" sortBy="periodicidade"
+					sortFunction="#{consultarEquipeController.sortTextIgnoreCase}"
+					filterStyle="display:none; visibility:hidden;"
+					styleClass="gri-alfanumericos noBackGroundImage">
+					<h:outputText value="#{item.periodicidade.descricao}" />
+				</p:column>
+			</caixa:cDataTable>
+		</h:form>
+		
+	</ui:define>
+</ui:composition>

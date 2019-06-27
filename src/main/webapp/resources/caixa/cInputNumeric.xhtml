@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:cc="http://java.sun.com/jsf/composite"	
+	xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core">
+
+<!-- INTERFACE -->
+<cc:interface>
+	<!-- DEFAULT PARAMS -->
+	<cc:attribute name="value" 			 />
+	<cc:attribute name="title"  		 type="java.lang.String" 					required="true"		/>
+	<cc:attribute name="id"  		 	 type="java.lang.String" 					required="false"	/>
+	<cc:attribute name="required" 		 type="java.lang.Boolean" default="false"	required="false" 	/>
+	<cc:attribute name="disabled"   	 type="java.lang.String"  default="false"	required="false"  	/>
+	<cc:attribute name="onclick" 		 type="java.lang.String" 										/>
+	<cc:attribute name="width" 			 type="java.lang.Integer" default="80"	 						/>
+	<cc:attribute name="readonly" 		 type="java.lang.Boolean" default="false" 						/>
+	<cc:attribute name="maxlength" 		 type="java.lang.Integer" default="10"	 						/>
+	
+	
+	<!-- CUSTOM PARAMS -->
+</cc:interface>
+
+<!-- IMPLEMENTATION -->
+<cc:implementation>
+
+		<h:outputLabel value="#{cc.attrs.title}">
+		<h:outputText rendered="#{cc.attrs.required}" styleClass="pesquisaDireta" />
+		<br/>
+		<p:inputMask id="#{cc.attrs.disabled}" style="width:#{cc.attrs.width}px;" styleClass="inputtext" 
+			value="#{cc.attrs.value}" mask="#" readonly="#{cc.attrs.readonly}"
+			onclick="#{cc.attrs.onclick}" maxlength="#{cc.attrs.maxlength}" />
+		</h:outputLabel> 	
+</cc:implementation>
+</html>

@@ -1,0 +1,142 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:caixa="http://java.sun.com/jsf/composite/caixa">	
+	
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li>
+						<a href="#"><h:outputText value="#{bundle['geral.breadcrumb.gerenciamento']}" /> </a>
+					</li>
+					<li>
+						<p:commandLink action="#{manterAusenciaEmpregadoController.redirectTelaConsulta}">
+								<span>#{bundle['geral.breadcrumb.ausenciaEmpregado.consultar']}</span>
+						</p:commandLink>						
+					</li>
+					<li><h:outputText value="#{manterAusenciaEmpregadoController.breadcrumb}" /></li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+	<ui:define name="content-main-page">	
+	
+		<h1 class="titlePage" >#{manterAusenciaEmpregadoController.breadcrumb}</h1>
+		<ul class="campoObrigatorio">
+            <li class="obrigatorio">Obrigatório</li>
+        </ul>                
+        
+		<h:form id="formCadastro" prependId="false">		
+			<p:focus id="focusFormCadastro" for="formCadastro" />			
+			<p:messages id="messages" showDetail="false"/>				
+			
+			<fieldset class="filtro">
+				<div id="divFiltro1" style="display: inline-block; width: 100%;">
+					<!-- Para funcionar deve possuir o id da matricula com este nome 'matricula' - Para renderizar o campo -->
+					<caixa:cInputMatricula id="matricula" title="#{bundle['equipe.label.matricula']}" controller="#{manterAusenciaEmpregadoController}" 
+					value="#{manterAusenciaEmpregadoController.empregado.matricula}" exibeModal="true" 
+					nomeForm="formCadastro" render=":formCadastro:messages :formCadastro:nomeEmpregado :formCadastro:matricula:item" /> 
+									
+					<!-- Nome Empregado -->
+					<h:outputLabel for="nomeEmpregado" value="#{bundle['ausenciaEmpregado.label.nomeEmpregado']}" styleClass="label-button" style="margin-top: 5px;">
+						<br />
+						<h:inputText id="nomeEmpregado" disabled="true" size="60" maxlength="60" styleClass="inputtext" 
+										value="#{manterAusenciaEmpregadoController.empregado.nome.toUpperCase()}"/>
+					</h:outputLabel>
+					
+					<!-- Data Início -->
+					<p:outputLabel value="#{bundle['geral.label.data.inicio']}" styleClass="label-button" style="margin-top: 2px;" for="idDataInicio" id="idLabelDataInicio" >
+						<h:outputText styleClass="pesquisaDireta" />
+						<br />
+						<p:calendar id="idDataInicio" size="10"
+							value="#{manterAusenciaEmpregadoController.ausencia.dataInicio}"
+							pattern="dd/MM/yyyy" locale="pt_BR"
+							title="#{bundle['ausenciaEmpregado.toltip.label.data.inicio']}"
+							converter="converter.DataConverter"
+							maxlength="10" 
+							onkeyup="maskIt(this,event,'##/##/#####',false,false)"
+							onkeypress="limparSessaoCodSimulacao();limparSessaoChaveSeguranca()">
+						</p:calendar>
+					</p:outputLabel>						
+	
+					<!-- Data Fim -->
+					<p:outputLabel value="#{bundle['geral.label.data.fim']}" style="margin-top: 2px;"
+						styleClass="label-button" for="idDataFim" id="idLabelDataFim" >
+						<h:outputText styleClass="pesquisaDireta" />
+						<br />
+						<p:calendar id="idDataFim" size="10"
+							value="#{manterAusenciaEmpregadoController.ausencia.dataFim}"
+							pattern="dd/MM/yyyy" locale="pt_BR"
+							title="#{bundle['ausenciaEmpregado.toltip.label.data.fim']}"
+							converter="converter.DataConverter"
+							maxlength="10"
+							onkeyup="maskIt(this,event,'##/##/#####',false,false)"
+							onkeypress="limparSessaoCodSimulacao();limparSessaoChaveSeguranca()">
+						</p:calendar>
+					</p:outputLabel>
+				</div>
+				
+				<div id="divFiltro2" style="display: inline-block; width: 100%;">
+					<h:outputLabel value="Motivo" styleClass="label-button" for="motivo" style="width: 200px">
+						<h:outputText styleClass="pesquisaDireta" />
+						<br />
+						<h:selectOneMenu id="motivo" value="#{manterAusenciaEmpregadoController.ausencia.motivo}" style="width: 200px"
+											converter="omnifaces.SelectItemsConverter">
+							<f:selectItem itemLabel="Selecione"></f:selectItem>
+							<f:selectItems value="#{manterAusenciaEmpregadoController.listaMotivos}" 
+										var="item"	itemValue="#{item}" itemLabel="#{item.descricao}" />							
+						</h:selectOneMenu>
+					</h:outputLabel>
+				</div>
+
+				<div id="divFiltro3" style="display: inline-block; width: 100%;">
+					<p:commandLink title="#{bundle['geral.button.gravar']}" styleClass="btnAzul marginTop buttonSelected"
+						update="messages @form :cancelarEscalaForm"
+						action="#{manterAusenciaEmpregadoController.validarSalvar}">
+						<span>#{bundle['geral.button.salvar']}</span>
+					</p:commandLink>
+					<p:commandLink title="#{bundle['geral.button.cancelar']}" styleClass="btnLaranja marginTop buttonSelected"
+										action="#{manterAusenciaEmpregadoController.redirectTelaConsulta}" >
+							<span>#{bundle['geral.button.cancelar']}</span>
+					</p:commandLink>
+				</div>
+			</fieldset>			
+		</h:form>		
+		
+		<!-- CONFIRMAR Cancelamento de Escala -->
+		<p:dialog  header="Ausência Empregado"
+			id="cancelarEscalaId" widgetVar="cancelarEscalaVar"
+			styleClass="ui-dialog-background" modal="true" dynamic="true"
+			resizable="false" position="center">
+			<h:form id="cancelarEscalaForm">
+				<span id="atencaoId" class="atencao2" />
+				
+				<h:outputFormat	style="font-weight: bold !important;" escape="false"
+					value="#{bundle['ausenciaEmpregado.message.empregadoEscaladoNoFuturo']}">
+				</h:outputFormat>
+				<br></br>
+
+				<p:commandLink  styleClass="btnLaranja marginTop buttonSelected"  
+						oncomplete="cancelarEscalaVar.hide();"
+						update=":formCadastro"
+						action="#{manterAusenciaEmpregadoController.salvar}" >
+						<span>Sim</span>
+				</p:commandLink>
+				
+				<p:commandLink styleClass="btnAzul marginTop buttonSelected"
+						oncomplete="cancelarEscalaVar.hide();">
+					<span>Não</span>
+				</p:commandLink>
+				<br></br>
+				
+
+			</h:form>
+		</p:dialog>
+		
+	</ui:define>	
+</ui:composition>

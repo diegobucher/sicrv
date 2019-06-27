@@ -1,0 +1,25 @@
+ul.ui-widget-content.ui-picklist-list {
+  border: 1px solid #a8a8a8 !important;
+  background: #ffffff !important;
+}
+
+/*
+ui-picklist .ui-picklist-buttons {
+    height: 150px !important;
+}*/
+
+.ufDualListModal {
+}
+
+.ufDualListModal .ui-picklist-list {
+	height: 150px !important;
+    width: 262px !important;;
+}
+
+/*
+.ufDualListModal .ui-picklist .ui-picklist-list {
+    height: 150px !important;
+    width: 295px !important;;
+}
+*/
+

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence
+	http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+
+	<persistence-unit name="sicrvPU">
+		<provider>org.hibernate.ejb.HibernatePersistence</provider>
+		<jta-data-source>java:jboss/datasources/sicrv-ds</jta-data-source>
+
+		<class>br.gov.caixa.gitecsa.sicrv.model.Atividade</class>
+		<class>br.gov.caixa.gitecsa.sicrv.model.Empregado</class>
+		<class>br.gov.caixa.gitecsa.sicrv.model.Equipe</class>
+		<class>br.gov.caixa.gitecsa.sicrv.model.Ausencia</class>
+		<class>br.gov.caixa.gitecsa.sicrv.model.CurvaPadrao</class>
+		<class>br.gov.caixa.gitecsa.sicrv.model.Unidade</class>
+		<class>br.gov.caixa.gitecsa.sicrv.model.EquipeAtividade</class>
+		<class>br.gov.caixa.gitecsa.sicrv.model.EquipeEmpregado</class>
+		<class>br.gov.caixa.gitecsa.sicrv.model.EstacaoTrabalho</class>
+		<class>br.gov.caixa.gitecsa.sicrv.model.Folga</class>
+		<class>br.gov.caixa.gitecsa.sicrv.model.Feriado</class>
+		<class>br.gov.caixa.gitecsa.sicrv.model.Escala</class>
+
+		<!-- <class>br.gov.caixa.gitecsa.sicrv.model.Solicitacao</class> -->
+
+		<exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+		<properties>
+			<property name="hibernate.hbm2ddl.auto" value="validate" />
+			<property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.format_sql" value="true" />
+			<property name="hibernate.use_sql_comments" value="false" />
+			<property name="hibernate.cache.use_second_level_cache" value="true" />
+			<property name="hibernate.search.lucene_version" value="LUCENE_CURRENT" />
+			<property name="hibernate.jdbc.batch_size" value="1000" />
+		</properties>
+	</persistence-unit>
+</persistence>

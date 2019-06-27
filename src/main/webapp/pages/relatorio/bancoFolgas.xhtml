@@ -1,0 +1,93 @@
+<ui:composition template="/WEB-INF/templates/template.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions"
+    xmlns:caixa="http://java.sun.com/jsf/composite/caixa">	
+	
+	<ui:define name="breadcrumb">
+		<h:form id="formBreadCrumb">
+			<div id="wrapAuxiliar">
+				<ul class="breadcrumb-sipat">
+					<li>Você está em:</li>
+					<li>
+						<a href="#"><h:outputText value="#{bundle['geral.breadcrumb.relatorio']}" /> </a>
+					</li>
+					<li>Banco de Folga</li>
+				</ul>
+			</div>
+		</h:form>
+	</ui:define>
+
+	<ui:param name="breadcrumbs" value="#{bundle['geral.breadcrumb.home']}" />
+	
+	<ui:define name="html-head">
+		<h:outputStylesheet library="css" name="relatorioBancoFolgas.css" />
+		<h:outputScript library="js" name="relatorioBancoFolgas.js" />
+		<script type="text/javascript">
+			$(document).ready(function(){
+			  $('#idMatricula\\:item').mask('C000000', {translation: {
+				  'C':{pattern:/[CcPp]/}  
+			  	 } 
+			   });
+			});
+		</script>
+	</ui:define>
+
+	<ui:define name="content-main-page">
+	    <h1>Banco de Folga</h1>
+		<h:form id="bancoFolgasForm" prependId="false">
+			<p:messages id="messages" showDetail="false" />
+			<fieldset class="filtro">
+				<caixa:cCombo id="idEquipe" title="Equipe" lista="#{relatorioBancoFolgasController.listEquipe}" 
+								value="#{relatorioBancoFolgasController.equipe.id}" var="equipe" 
+								itemLabel="#{equipe.nome}" itemValue="#{equipe.id}" width="160"/>
+				<caixa:cInputText id="idMatricula" title="Matrícula" value="#{relatorioBancoFolgasController.matricula}" maxlength="7" width="160" />	   				
+				<caixa:cInputData id="idData" title="Data da Projeção" value="#{relatorioBancoFolgasController.dataProjecao}"  required="true" />
+				<div class="clear"></div>
+				<p:commandLink action="#{relatorioBancoFolgasController.buscarBancoFolgas()}" update="@form" oncomplete="acoesAposPesquisar()"
+						styleClass="btnAzul marginTop marginTop20">
+					<span>Consultar</span>
+				</p:commandLink>
+			</fieldset>
+			
+			<p:outputPanel rendered="#{relatorioBancoFolgasController.pesquisaAtiva}">
+				<h:commandLink value="" action="#{relatorioBancoFolgasController.exportarParaExcel()}" 
+								style="text-decoration: none" styleClass="gerarPlanilha floatRight" >
+					<span class="fa fa-file-excel-o iconCaixa"/>
+					<span 	style="font-weight: bold; font-size: 12px !important; 
+							color: #333 !important; cursor: pointer; margin-right: 8px; 
+							margin-top: 5px;">
+						Gerar Planilha
+					</span>
+					<pe:exporter type="xlsx" target="tableBancoFolga" fileName="Banco de Folgas" subTable="true"/>						
+				</h:commandLink>
+				<div class="clear"></div>
+				
+				<p:dataTable id="tableBancoFolga" var="bancoFolga" value="#{relatorioBancoFolgasController.listaBancoFolgaDTO}"
+					styleClass="zebra" rowStyleClass="par, impar">
+					<p:subTable var="empregado" value="#{bancoFolga.listEmpregadoFolgaDTO}">
+						<f:facet name="header">
+							<h:outputText value="#{bancoFolga.equipe.nome}" />
+						</f:facet>
+						<p:column style="text-align:center;">
+							<h:outputText value="#{empregado.matricula}"  />
+						</p:column>					
+						<p:column>
+							<h:outputText value="#{empregado.nome}" />
+						</p:column>					
+						<p:column style="text-align:center;">
+							<h:outputText value="#{empregado.saldo}" />
+						</p:column>					
+						<p:column style="text-align:center;">
+							<h:outputText value="#{empregado.projecao}" />
+						</p:column>					
+					</p:subTable>
+				</p:dataTable>			
+			</p:outputPanel>
+		</h:form>
+	</ui:define>
+</ui:composition>

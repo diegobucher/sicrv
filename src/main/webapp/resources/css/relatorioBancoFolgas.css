@@ -1,0 +1,50 @@
+
+/**
+* Zebras
+*/
+.zebra th {
+	font-size: 0.9em !important;
+}
+
+.zebra .impar {
+	background: #F4FCFE;
+}
+
+.zebra .par {
+	background: #d9e1f4;
+}
+
+.ui-datatable {
+	font-size: 0.9em !important;
+}
+
+.ui-datatable .ui-state-default {
+	background: transparent;
+	text-shadow: initial;
+}
+
+.ui-datatable .ui-widget-header {
+	background-color: #999 !important;
+}
+.ui-datatable .ui-datatable-subtable-header {
+	color: #FFF !important;
+}
+
+.ui-datatable .ui-widget-header {
+	font-weight: normal !important;
+}
+
+.bgCinzaEscuro {
+	background-color: #999 !important;
+}
+
+.bgCinzaEscuro>th {
+	color: #fff !important;
+}
+
+.columnHeaderSubtable{
+  background: #d5d5d5 !important;
+  font-size: 0.9em !important;
+  font-weight: bold !important;
+  color: #4f4f4f !important;
+}
